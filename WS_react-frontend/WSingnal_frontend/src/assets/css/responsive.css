@@ -1,0 +1,33 @@
+/* responsive.css */
+body {
+    font-size: 14px;
+  }
+  
+  
+  /* 화면이 768px 이상일 때 (태블릿 및 데스크탑) */
+  @media (min-width: 768px) {
+    body {
+      font-size: 16px;
+    }
+  
+    .header {
+      padding: 20px;
+    }
+    .main-page {
+      padding: 40px;
+    }
+  }
+  
+  /* 화면이 1024px 이상일 때 (데스크탑) */
+  @media (min-width: 1024px) {
+    body {
+      font-size: 18px;
+    }
+  
+    .header {
+      padding: 30px;
+    }
+    .main-page {
+      padding: 50px;
+    }
+  }
