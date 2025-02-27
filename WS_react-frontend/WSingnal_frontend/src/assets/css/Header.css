@@ -1,0 +1,105 @@
+/* Header.css */
+.header {
+  background-color: #333; /* 블랙 배경 */
+  padding: 20px 20px;
+  color: white; /* 화이트 텍스트 */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  word-wrap: break-word;  /* 긴 단어가 자동으로 줄 바꿈되도록 */
+  white-space: normal; /* 텍스트가 줄 바꿈되도록 설정 */
+  display: flex;
+  justify-content: space-between; /* 로고와 네비게이션 메뉴 양옆으로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+}
+
+.nav-container {
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  width: 100%;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center; /* 로고 수직 중앙 정렬 */
+  justify-content: center; /* 로고 수평 중앙 정렬 */
+}
+
+.nav-logo img {
+  height: 40px; /* 로고 크기 */
+  max-height: 100%; /* 부모의 높이에 맞춰 크기 제한 */
+}
+
+.nav {
+  display: flex;
+  justify-content: center; /* 메뉴 아이템 중앙 정렬 */
+  width: 100%;
+}
+
+.nav ul {
+  display: flex;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap; /* 메뉴 항목들이 화면에 맞게 줄 바꿈되도록 설정 */
+}
+
+.nav ul li {
+  margin-right: 20px;
+}
+
+.nav ul li a {
+  color: white; /* 화이트 텍스트 */
+  text-decoration: none;
+  font-size: 16px;
+  transition: color 0.3s ease;
+}
+
+.nav ul li a:hover {
+  color: #f8c8d7;
+}
+
+.nav ul li button {
+  background-color: #d25d8a;
+  color: white; /* 화이트 텍스트 */
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.nav ul li button:hover {
+  background-color: #f8c8d7;
+}
+
+/* 로그인 모달 */
+.login-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}

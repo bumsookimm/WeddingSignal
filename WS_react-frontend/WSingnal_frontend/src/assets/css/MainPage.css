@@ -1,0 +1,17 @@
+
+.main-page {
+ 
+  text-align: center;
+}
+
+
+.main-image {
+  margin-top: 30px;
+}
+
+.main-image img {
+  width: 100%; /* 화면 크기에 맞춰 이미지를 조정 */
+  max-width: auto; /* 최대 크기 설정 */
+  height: auto; /* 비율 유지 */
+  border-radius: 10px; /* 이미지에 둥근 모서리 추가 */
+}
