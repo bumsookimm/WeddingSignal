@@ -36,9 +36,9 @@
 - **인원**: 개인프로젝트
 - **기간**: 25. 02. 28 ~
 - **주요 기술 스택** (예정)
-백엔드: ```Java```, ```Spring MVC```, ```Spring Boot```, ```MyBatis```, ```Oracle```
-프론트엔드: ```JavaScript```, ```React```, ```HTML```, ```CSS```
-실시간 기능: ```WebSocket```, ```Node.js```
-결제 시스템: ```Stripe```, ```PayPal```, ```카카오페이```, ```토스```
-배포 및 인프라: ```AWS```, ```Docker```, ```Nginx```, ```CI/CD```
-기타 도구: ```Git```, ```GitHub```
+- **백엔드**: ```Java```, ```Spring MVC```, ```Spring Boot```, ```MyBatis```, ```Oracle```
+- **프론트엔드**: ```JavaScript```, ```React```, ```HTML```, ```CSS```
+- **실시간 기능**: ```WebSocket```, ```Node.js```
+- **결제 시스템**: ```Stripe```, ```PayPal```, ```카카오페이```, ```토스```
+- **배포 및 인프라**: ```AWS```, ```Docker```, ```Nginx```, ```CI/CD```
+- **기타 도구**: ```Git```, ```GitHub```
