@@ -66,4 +66,3 @@ INDEX VERSION 1.134+C:\sts4\WeddingSignal\.metadata\.plugins\org.eclipse.jdt.cor
 1581750445.index
 3601506050.index
 608031563.index
-1865797976.index
