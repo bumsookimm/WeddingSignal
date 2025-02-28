@@ -2,12 +2,18 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/Header.css';
 import LoginPage from './LoginPage';
+import SignUp from './SignUp';  // SignUp 컴포넌트 임포트
 
 function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);  // 회원가입 모달 상태
 
   const handleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
+  };
+
+  const handleSignUpModal = () => {
+    setIsSignUpModalOpen(!isSignUpModalOpen);  // 회원가입 모달 토글
   };
 
   return (
@@ -28,6 +34,7 @@ function Header() {
             <li><Link to="/community">Community</Link></li>
             <li><Link to="/Contact">Contact Us</Link></li>
             <li><button onClick={handleLoginModal}>Log In</button></li>
+            <li><button onClick={handleSignUpModal}>SignUp</button></li>  {/* 회원가입 버튼 */}
           </ul>
         </nav>
       </div>
@@ -38,6 +45,16 @@ function Header() {
           <div className="modal-content">
             <button className="close-btn" onClick={handleLoginModal}>X</button>
             <LoginPage closeModal={handleLoginModal} />
+          </div>
+        </div>
+      )}
+
+      {/* 회원가입 모달 */}
+      {isSignUpModalOpen && (
+        <div className="login-modal">
+          <div className="modal-content">
+            <button className="close-btn" onClick={handleSignUpModal}>X</button>
+            <SignUp closeModal={handleSignUpModal} />
           </div>
         </div>
       )}
