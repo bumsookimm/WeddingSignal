@@ -9,7 +9,12 @@
   color: #333; /* 다크 그레이 또는 블랙 텍스트 */
   margin-bottom: 20px;
 }
-
+.login-page .signup-modal {
+  text-align: left; /* 모달에서 텍스트 왼쪽 정렬 */
+  padding: 20px;
+  margin: 0 auto;
+  max-width: 500px;
+}
 .login-options {
   display: flex;
   flex-direction: column;
