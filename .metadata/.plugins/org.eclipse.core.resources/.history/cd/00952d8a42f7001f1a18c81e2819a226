@@ -1,0 +1,23 @@
+package com.wsingnal.controller;
+
+public class SignUpController {
+
+	@RestController
+	@RequestMapping("/api")
+	public class SignUpController {
+
+		@Autowired
+		private UserService userService;
+
+		@PostMapping("/signup")
+		public ResponseEntity<String> signUp(@RequestBody SignUpRequest signUpRequest) {
+			boolean success = userService.registerUser(signUpRequest);
+			if (success) {
+				return ResponseEntity.ok("회원가입 성공!");
+			} else {
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용 중인 이메일입니다.");
+			}
+		}
+	}
+
+}

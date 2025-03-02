@@ -26,7 +26,7 @@ const schema = z.object({
   path: ["confirmPassword"],
 });
 
-const SignupForm = () => {
+const SignUp = () => {
   const {
     register,
     handleSubmit,
@@ -46,65 +46,42 @@ const SignupForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="signup-form p-6 border rounded-lg">
-    
+    <div className="signup-modal">
+      <h2 className="signup-title">회원가입</h2>
+      <form onSubmit={handleSubmit(onSubmit)} className="signup-form p-6 border rounded-lg">
+        <input type="email" {...register("email")} placeholder="이메일" />
+        {errors.email && <p>{errors.email.message}</p>}
 
-      <input
-        type="email"
-        {...register("email")}
-        placeholder="이메일"
-      />
-      {errors.email && <p>{errors.email.message}</p>}
+        <input type="password" {...register("password")} placeholder="비밀번호" />
+        {errors.password && <p>{errors.password.message}</p>}
 
-   
-      <input
-        type="password"
-        {...register("password")}
-        placeholder="비밀번호"
-      />
-      {errors.password && <p>{errors.password.message}</p>}
+        <input type="password" {...register("confirmPassword")} placeholder="비밀번호 확인" />
+        {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
 
-     
-      <input
-        type="password"
-        {...register("confirmPassword")}
-        placeholder="비밀번호 확인"
-      />
-      {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
+        <input type="text" {...register("nickname")} placeholder="이름" />
+        {errors.nickname && <p>{errors.nickname.message}</p>}
 
-    
-      <input
-        type="text"
-        {...register("nickname")}
-        placeholder="이름"
-      />
-      {errors.nickname && <p>{errors.nickname.message}</p>}
+        <label>생년월일</label>
+        <input type="date" {...register("birthdate")} />
 
-      <label>생년월일</label>
-      <input type="date" {...register("birthdate")} />
+        <label>성별</label>
+        <select {...register("gender")}>
+          <option value="male">남성</option>
+          <option value="female">여성</option>
+        </select>
 
-      <label>성별</label>
-      <select {...register("gender")}>
-        <option value="male">남성</option>
-        <option value="female">여성</option>
-      </select>
+        <input type="text" {...register("phone")} placeholder="휴대폰 번호" />
+        {errors.phone && <p>{errors.phone.message}</p>}
 
-      
-      <input
-        type="text"
-        {...register("phone")}
-        placeholder="휴대폰 번호"
-      />
-      {errors.phone && <p>{errors.phone.message}</p>}
+        <label>
+          <input type="checkbox" {...register("agree")} /> 개인정보 처리방침 동의
+        </label>
+        {errors.agree && <p>{errors.agree.message}</p>}
 
-      <label>
-        <input type="checkbox" {...register("agree")} /> 개인정보 처리방침 동의
-      </label>
-      {errors.agree && <p>{errors.agree.message}</p>}
-
-      <button type="submit">회원가입</button>
-    </form>
+        <button type="submit">회원가입</button>
+      </form>
+    </div>
   );
 };
 
-export default SignupForm;
+export default SignUp;
