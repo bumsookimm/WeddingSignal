@@ -34,7 +34,7 @@ function Header() {
             <li><Link to="/community">Community</Link></li>
             <li><Link to="/Contact">Contact Us</Link></li>
             <li><button onClick={handleLoginModal}>Log In</button></li>
-            <li><button onClick={handleSignUpModal}>SignUp</button></li>  {/* 회원가입 버튼 */}
+            <li><button onClick={handleSignUpModal}>SignUp</button></li> 
           </ul>
         </nav>
       </div>
