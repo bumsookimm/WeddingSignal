@@ -18,8 +18,8 @@ const LoginPage = ({ closeModal }) => {
     };
   
     return (
-      <div className="login-page">
-        <h2 className="form-header">{isLoginMode ? '로그인' : '회원가입'}</h2>
+<div className="login-page">
+{isLoginMode ? <h2 className="form-header"> 로그인 </h2> : null}
   
         {/* 로그인 폼 */}
         {isLoginMode ? (
