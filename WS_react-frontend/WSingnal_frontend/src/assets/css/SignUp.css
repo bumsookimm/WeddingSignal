@@ -1,0 +1,78 @@
+/* 회원가입 폼 스타일 */
+.signup-form {
+  width: 80%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* 입력 필드 레이블 */
+.signup-form label {
+  font-size: 14px;
+  color: #333;
+  display: block;
+  margin: 10px 0 5px;
+}
+
+/* 입력 필드 스타일 */
+.signup-form input[type="email"],
+.signup-form input[type="password"],
+.signup-form input[type="text"],
+.signup-form input[type="date"],
+.signup-form select {
+  width: 93%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 15px;
+  transition: background-color 0.3s ease;
+
+}
+
+.signup-form input[type="email"]:focus,
+.signup-form input[type="password"]:focus,
+.signup-form input[type="text"]:focus,
+.signup-form input[type="date"]:focus,
+.signup-form select:focus {
+  background-color: #e6f7ff;
+  border-color: #66ccff;
+}
+
+/* 플레이스홀더 스타일 */
+.signup-form input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
+
+/* 버튼 스타일 */
+.signup-form button {
+  width: 100%;
+  padding: 12px;
+  background-color: #d25d8a;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.signup-form button:hover {
+  background-color: #f8c8d7;
+}
+
+/* 오류 메시지 스타일 */
+.signup-form p {
+  color: #f44336;
+  font-size: 12px;
+  margin: -10px 0 10px;
+}
+
+
+.signup-title {
+  text-align: center;
+  color: black;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}

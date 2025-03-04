@@ -1,0 +1,5 @@
+package com.wsingnal.model;
+
+public class UserDTO {
+
+}
