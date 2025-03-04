@@ -1,10 +1,10 @@
 ### 프로젝트 관련 ###
 HELP.md
 target/
-build/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
@@ -20,35 +20,32 @@ build/
 .recommenders/
 bin/
 
-### Maven 관련 ###
-.mvn/
-mvnw
-mvnw.cmd
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
 
-### Java 관련 ###
-*.class
-*.jar
-*.war
-*.ear
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
 
 ### OS 관련 ###
 Thumbs.db
 .DS_Store
-ehthumbs.db
+
+### Maven ###
+mvnw
+mvnw.cmd
 
 ### 로그 및 임시 파일 ###
 *.log
 logs/
 *.swp
 *.swo
-*.bak
-*.tmp
-*.lock
-*.cache
-
-### test 리소스 디렉토리 제외 ###
-src/test/resources/
-
-### STS 관련 파일들 ###
-.metadata/
-*.log
