@@ -1,12 +1,13 @@
 package com.wsingnal.service;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.wsingnal.dto.UserDto;
 import com.wsingnal.model.User;
-import com.wsingnal.model.UserDTO;
 import com.wsingnal.repository.UserRepository;
 
 @Service
@@ -15,22 +16,20 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public boolean registerUser(UserDTO UserDTO) {
-        // 이미 사용 중인 이메일 확인
-        if (userRepository.existsByEmail(UserDTO.getEmail())) {
-            return false;  // 이메일이 이미 존재하면 false 반환
+    public boolean registerUser(UserDto userDto) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+            return false; // 이메일이 이미 사용 중
         }
 
-        // 새로운 사용자 등록
         User user = new User();
-        user.setEmail(UserDTO.getEmail());
-        user.setPassword(UserDTO.getPassword());
-        user.setNickname(UserDTO.getNickname());
-        user.setBirthdate(LocalDate.parse(UserDTO.getBirthdate()));
-        user.setGender(UserDTO.getGender());
-        user.setPhone(UserDTO.getPhone());
-        
-
+        user.setEmail(userDto.getEmail());
+        user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
+        user.setNickname(userDto.getNickname());
+        user.setBirthdate(userDto.getBirthdate());
+        user.setGender(userDto.getGender());
+        user.setPhone(userDto.getPhone());
+        user.setCreatedAt(new Date());
+        user.setUpdatedAt(new Date());
 
         userRepository.save(user);
         return true;

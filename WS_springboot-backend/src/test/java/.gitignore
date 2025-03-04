@@ -1,0 +1,51 @@
+### 프로젝트 관련 ###
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Eclipse (STS) ###
+.metadata/
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+.recommenders/
+bin/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### OS 관련 ###
+Thumbs.db
+.DS_Store
+
+### Maven ###
+mvnw
+mvnw.cmd
+
+### 로그 및 임시 파일 ###
+*.log
+logs/
+*.swp
+*.swo
