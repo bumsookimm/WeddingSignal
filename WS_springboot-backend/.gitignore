@@ -20,30 +20,21 @@ build/
 .recommenders/
 bin/
 
-### IntelliJ IDEA ###
-.idea/
-*.iws
-*.iml
-*.ipr
+### Maven 관련 ###
+.mvn/
+mvnw
+mvnw.cmd
 
-### NetBeans ###
-/nbproject/private/
-nbbuild/
-dist/
-nbdist/
-.nb-gradle/
-
-### VS Code ###
-.vscode/
+### Java 관련 ###
+*.class
+*.jar
+*.war
+*.ear
 
 ### OS 관련 ###
 Thumbs.db
 .DS_Store
-
-### Maven ###
-.mvn/
-mvnw
-mvnw.cmd
+ehthumbs.db
 
 ### 로그 및 임시 파일 ###
 *.log
@@ -54,3 +45,10 @@ logs/
 *.tmp
 *.lock
 *.cache
+
+### test 리소스 디렉토리 제외 ###
+src/test/resources/
+
+### STS 관련 파일들 ###
+.metadata/
+*.log

@@ -1,0 +1,38 @@
+package com.wsingnal.service;
+
+import java.time.LocalDate;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.wsingnal.dto.UserDTO;
+import com.wsingnal.model.User;
+import com.wsingnal.repository.UserRepository;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public boolean registerUser(UserDTO UserDTO) {
+        // 이미 사용 중인 이메일 확인
+        if (userRepository.existsByEmail(UserDTO.getEmail())) {
+            return false;  // 이메일이 이미 존재하면 false 반환
+        }
+
+        // 새로운 사용자 등록
+        User user = new User();
+        user.setEmail(UserDTO.getEmail());
+        user.setPassword(UserDTO.getPassword());
+        user.setNickname(UserDTO.getNickname());
+        user.setBirthdate(LocalDate.parse(UserDTO.getBirthdate()));
+        user.setGender(UserDTO.getGender());
+        user.setPhone(UserDTO.getPhone());
+        
+
+
+        userRepository.save(user);
+        return true;
+    }
+}
