@@ -1,54 +1,103 @@
-### 프로젝트 관련 ###
+
+
+########################
 HELP.md
 target/
-build/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### Eclipse (STS) ###
-.metadata/
+### NODE MODULES ###
+node_modules
+
+### STS ###
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings/
+.settings
 .springBeans
 .sts4-cache
-.recommenders/
+.metadata
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+#########################################################################
+
+# Eclipse
+.metadata
 bin/
-
-### Maven 관련 ###
-.mvn/
-mvnw
-mvnw.cmd
-
-### Java 관련 ###
-*.class
-*.jar
-*.war
-*.ear
-
-### OS 관련 ###
-Thumbs.db
-.DS_Store
-ehthumbs.db
-
-### 로그 및 임시 파일 ###
-*.log
-logs/
-*.swp
-*.swo
-*.bak
+tmp/
 *.tmp
-*.lock
-*.cache
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.recommenders
 
-### test 리소스 디렉토리 제외 ###
-src/test/resources/
+# External tool builders
+.externalToolBuilders/
 
-### STS 관련 파일들 ###
-.metadata/
-*.log
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# PyDev specific (Python IDE for Eclipse)
+*.pydevproject
+
+# CDT-specific (C/C++ Development Tooling)
+.cproject
+
+# CDT-autotools
+.autotools
+
+# Java annotation processor (APT)
+.factorypath
+
+# PDT-specific (PHP Development Tools)
+.buildpath
+
+# sbteclipse plugin
+.target
+
+# Tern plugin
+.tern-project
+
+# TeXlipse plugin
+.texlipse
+
+# STS (Spring Tool Suite)
+.springBeans
+
+# Code Recommenders
+.recommenders/
+
+# Annotation Processing
+.apt_generated/
+.apt_generated_test/
+
+# Scala IDE specific (Scala & Java development for Eclipse)
+.cache-main
+.scala_dependencies
+.worksheet
+
+# Spring Boot Tooling
+.sts4-cache/
