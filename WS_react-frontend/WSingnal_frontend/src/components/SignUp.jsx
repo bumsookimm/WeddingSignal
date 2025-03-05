@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -26,7 +26,7 @@ const schema = z.object({
   path: ["confirmPassword"],
 });
 
-const SignUp = () => {
+const SignUp = ({ closeModal }) => {
   const {
     register,
     handleSubmit,
@@ -35,15 +35,17 @@ const SignUp = () => {
   } = useForm({
     resolver: zodResolver(schema),
   });
+
   const onSubmit = async (data) => {
     try {
-      await axios.post("http://localhost:8090/api/signup", data, {
+      await axios.post("http://localhost:8070/api/signup", data, {
         headers: {
           "Content-Type": "application/json",
         },
-        withCredentials: true, // 쿠키를 사용할 경우 필요
+        withCredentials: true,
       });
       alert("회원가입 성공!");
+      closeModal(); // 회원가입 성공 후 모달 닫기
     } catch (error) {
       console.log(error);  // 에러 로그 출력
       setError("email", { message: "이미 사용 중인 이메일입니다" });
@@ -68,8 +70,6 @@ const SignUp = () => {
 
         <label>생년월일</label>
         <input type="date" {...register("birthdate")} />
-       
-
         <label>성별</label>
         <select {...register("gender")}>
           <option value="male">남성</option>
