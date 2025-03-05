@@ -17,7 +17,8 @@ node_modules
 .settings
 .springBeans
 .sts4-cache
-.metadata
+.metadata/
+plugins/
 
 ### IntelliJ IDEA ###
 .idea
