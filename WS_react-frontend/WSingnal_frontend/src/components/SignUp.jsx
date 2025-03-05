@@ -11,11 +11,11 @@ const schema = z.object({
   password: z
     .string()
     .min(8, "비밀번호는 최소 8자 이상이어야 합니다")
-    .regex(/[A-Z]/, "대문자를 포함해야 합니다")
     .regex(/[a-z]/, "소문자를 포함해야 합니다")
     .regex(/[0-9]/, "숫자를 포함해야 합니다")
     .regex(/[@$!%*?&]/, "특수문자를 포함해야 합니다"),
-  confirmPassword: z.string(),
+  
+    confirmPassword: z.string(),
   nickname: z.string().min(2, "닉네임은 최소 2자 이상이어야 합니다"),
   birthdate: z.string(),
   gender: z.enum(["male", "female"], { required_error: "성별을 선택하세요" }),
@@ -35,12 +35,17 @@ const SignUp = () => {
   } = useForm({
     resolver: zodResolver(schema),
   });
-
   const onSubmit = async (data) => {
     try {
-      await axios.post("http://localhost:8080/api/signup", data);
+      await axios.post("http://localhost:8090/api/signup", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true, // 쿠키를 사용할 경우 필요
+      });
       alert("회원가입 성공!");
     } catch (error) {
+      console.log(error);  // 에러 로그 출력
       setError("email", { message: "이미 사용 중인 이메일입니다" });
     }
   };
@@ -63,6 +68,7 @@ const SignUp = () => {
 
         <label>생년월일</label>
         <input type="date" {...register("birthdate")} />
+       
 
         <label>성별</label>
         <select {...register("gender")}>
