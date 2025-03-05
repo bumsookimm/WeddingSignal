@@ -53,6 +53,7 @@ local.properties
 .settings/
 .loadpath
 .recommenders
+.metadata/.plugins/
 
 # External tool builders
 .externalToolBuilders/
