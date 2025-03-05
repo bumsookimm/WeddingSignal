@@ -1,9 +1,11 @@
 package com.wsingnal.service;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.wsingnal.dto.UserDto;
@@ -13,25 +15,34 @@ import com.wsingnal.repository.UserRepository;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+	@Autowired
+	private UserRepository userRepository;
 
-    public boolean registerUser(UserDto userDto) {
-        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-            return false; // 이메일이 이미 사용 중
-        }
+	final private PasswordEncoder passwordEncoder;
 
-        User user = new User();
-        user.setEmail(userDto.getEmail());
-        user.setPassword(new BCryptPasswordEncoder().encode(userDto.getPassword()));
-        user.setNickname(userDto.getNickname());
-        user.setBirthdate(userDto.getBirthdate());
-        user.setGender(userDto.getGender());
-        user.setPhone(userDto.getPhone());
-        user.setCreatedAt(new Date());
-        user.setUpdatedAt(new Date());
+	public UserService() {
+		this.passwordEncoder = new BCryptPasswordEncoder();
+	}
 
-        userRepository.save(user);
-        return true;
-    }
+	public boolean registerUser(UserDto userDto) {
+		if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
+			return false; // 이메일이 이미 사용 중
+		}
+
+		String encodedPassword = passwordEncoder.encode(userDto.getPassword());
+
+		User user = new User();
+		user.setId(UUID.randomUUID().toString());
+		user.setEmail(userDto.getEmail());
+		user.setPassword(encodedPassword);
+		user.setNickname(userDto.getNickname());
+		user.setBirthdate(userDto.getBirthdate());
+		user.setGender(userDto.getGender());
+		user.setPhone(userDto.getPhone());
+		user.setCreatedAt(new Date());
+		user.setUpdatedAt(new Date());
+
+		userRepository.save(user);
+		return true;
+	}
 }

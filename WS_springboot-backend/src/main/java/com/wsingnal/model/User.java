@@ -1,11 +1,11 @@
 package com.wsingnal.model;
 
 import java.util.Date;
+import java.util.UUID;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,8 +17,7 @@ import lombok.Setter;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String email;
     private String password;
@@ -30,4 +29,9 @@ public class User {
     private Date updatedAt;
 
  
+    
+    @PrePersist
+    public void generateUUID() {
+        this.id = UUID.randomUUID().toString();  // UUID 자동 생성
+    }
 }
