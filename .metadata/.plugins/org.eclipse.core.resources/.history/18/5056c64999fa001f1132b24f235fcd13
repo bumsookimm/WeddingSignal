@@ -1,0 +1,5 @@
+package com.wsingnal.service;
+
+public class SmsService {
+
+}

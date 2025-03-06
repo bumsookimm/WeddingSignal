@@ -1,0 +1,25 @@
+package com.wsingnal.service;
+
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+@Service
+public class RedisCacheService {
+
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    // 인증번호 저장 (휴대폰 번호를 키로 사용)
+    public void saveVerificationCode(String phone, String code) {
+        redisTemplate.opsForValue().set(phone, code, 10, TimeUnit.MINUTES);  // 10분 동안 저장
+    }
+
+    // 인증번호 검증
+    public boolean verifyVerificationCode(String phone, String code) {
+        String storedCode = redisTemplate.opsForValue().get(phone);
+        return storedCode != null && storedCode.equals(code);
+    }
+}

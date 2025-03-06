@@ -1,5 +1,3 @@
-
-
 ########################
 HELP.md
 target/
@@ -102,3 +100,9 @@ local.properties
 
 # Spring Boot Tooling
 .sts4-cache/
+
+# Ignore application.properties
+application.properties
+
+# Ignore .env files
+.env
