@@ -15,8 +15,8 @@ const schema = z.object({
     .regex(/[0-9]/, "숫자를 포함해야 합니다")
     .regex(/[@$!%*?&]/, "특수문자를 포함해야 합니다"),
   
-    confirmPassword: z.string(),
-  nickname: z.string().min(2, "닉네임은 최소 2자 이상이어야 합니다"),
+  confirmPassword: z.string(),
+  nickname: z.string().min(2, "이름은은 최소 2자 이상이어야 합니다"),
   birthdate: z.string(),
   gender: z.enum(["male", "female"], { required_error: "성별을 선택하세요" }),
   phone: z.string().min(10, "휴대폰 번호를 입력하세요"),
@@ -35,6 +35,41 @@ const SignUp = ({ closeModal }) => {
   } = useForm({
     resolver: zodResolver(schema),
   });
+
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState(""); // 인증 코드 저장
+  const [userInputCode, setUserInputCode] = useState(""); // 사용자가 입력한 인증 코드
+
+  const sendVerificationCode = async () => {
+    const phone = document.getElementById("phone").value;
+    console.log("Sending verification code to:", phone); // 전화번호 확인
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8070/api/sendVerificationCode",
+        { phone }, // `phone` 객체를 전송
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      );
+      setVerificationCode(data.code);
+      alert("인증 코드가 전송되었습니다.");
+      setIsCodeSent(true);
+    } catch (error) {
+      console.error("인증 코드 전송 실패:", error);
+      alert("인증 코드 전송에 실패했습니다.");
+    }
+  };
+  
+
+  const verifyCode = () => {
+    if (verificationCode === userInputCode) {
+      alert("휴대폰 인증 성공!");
+    } else {
+      alert("인증 코드가 일치하지 않습니다.");
+    }
+  };
 
   const onSubmit = async (data) => {
     try {
@@ -76,8 +111,23 @@ const SignUp = ({ closeModal }) => {
           <option value="female">여성</option>
         </select>
 
-        <input type="text" {...register("phone")} placeholder="휴대폰 번호" />
+        <input id="phone" type="text" {...register("phone")} placeholder="휴대폰 번호" />
         {errors.phone && <p>{errors.phone.message}</p>}
+
+        {/* 휴대폰 인증 버튼 */}
+        <button type="button" onClick={sendVerificationCode}>휴대폰 인증</button>
+
+        {/* 인증 코드 입력 */}
+        {isCodeSent && (
+          <>
+            <input
+              type="text"
+              placeholder="인증 코드를 입력하세요"
+              onChange={(e) => setUserInputCode(e.target.value)}
+            />
+            <button type="button" onClick={verifyCode}>인증 코드 확인</button>
+          </>
+        )}
 
         <label>
           <input type="checkbox" {...register("agree")} /> 개인정보 처리방침 동의

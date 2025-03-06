@@ -1,0 +1,5 @@
+package com.wsingnal.config;
+
+public class RedisConfig {
+
+}
