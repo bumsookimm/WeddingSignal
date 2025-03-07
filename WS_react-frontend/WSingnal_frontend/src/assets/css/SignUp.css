@@ -4,6 +4,7 @@
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
+  text-align: left; 
 }
 
 /* 입력 필드 레이블 */
@@ -61,6 +62,7 @@
   background-color: #f8c8d7;
 }
 
+
 /* 오류 메시지 스타일 */
 .signup-form p {
   color: #f44336;
@@ -75,4 +77,36 @@
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+}
+
+.signup-form .verification-button{
+  background-color: #545151;  /* 회색 */
+}
+
+.signup-form .signup-submit-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #dcdcdc;  /* 회색 */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: not-allowed;  /* 비활성화된 상태 */
+  transition: background-color 0.3s ease;
+}
+
+/* 버튼 활성화 스타일 */
+.signup-form .signup-submit-button.active {
+  background-color: #d25d8a;  /* 핑크 */
+  cursor: pointer;  /* 활성화되었을 때 커서 변경 */
+}
+
+/* 버튼에 호버 효과 */
+.signup-form .signup-submit-button:hover {
+  background-color: #f8c8d7;
+}
+
+/* 인증 버튼 비활성화 상태 */
+.signup-form .signup-submit-button:disabled {
+  cursor: not-allowed;
 }

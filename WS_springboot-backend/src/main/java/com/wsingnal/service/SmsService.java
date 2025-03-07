@@ -5,96 +5,76 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
 
 import com.wsingnal.dto.PhoneRequestDto;
 import com.wsingnal.dto.VerifyCodeDto;
 
+import net.nurigo.sdk.NurigoApp;
+import net.nurigo.sdk.message.model.Message;
+import net.nurigo.sdk.message.service.DefaultMessageService;
+
 @Service
 public class SmsService {
 
-    @Value("${sms.api.key}")
-    private String apiKey;
+	@Value("${sms.api.key}")
+	private String apiKey;
 
-    @Value("${sms.api.secret}")
-    private String apiSecret;
+	@Value("${sms.api.secret}")
+	private String apiSecret;
 
-    @Value("${sms.api.sender}")
-    private String sender;
+	@Value("${sms.api.sender}")
+	private String sender;
 
-    private final RedisTemplate<String, String> redisTemplate;
+	private final RedisTemplate<String, String> redisTemplate;
 
-    public SmsService(RedisTemplate<String, String> redisTemplate) {
-        this.redisTemplate = redisTemplate;
-    }
+	public SmsService(RedisTemplate<String, String> redisTemplate) {
+		this.redisTemplate = redisTemplate;
+		// Coolsms API 초기화
 
-    // 인증 코드 전송
-    public void sendVerificationCode(PhoneRequestDto request) {
-        String code = generateVerificationCode();
+	}
 
-        // Redis에 인증 코드 저장 (유효시간: 10분)
-        redisTemplate.opsForValue().set(request.getPhone(), code, 10, TimeUnit.MINUTES);
+	// 인증 코드 전송
+	public void sendVerificationCode(PhoneRequestDto request) {
+		String code = generateVerificationCode();
+		System.out.println("code: " + code);
 
-        // 인증 코드 SMS 발송
-        sendSms(request.getPhone(), code);
-    }
+		// Redis에 인증 코드 저장 (유효시간: 3분)
+		redisTemplate.opsForValue().set(request.getPhone(), code, 3, TimeUnit.MINUTES);
 
-    // 인증 코드 발송 (Coolsms API 호출)
-    private void sendSms(String phone, String code) {
-        RestTemplate restTemplate = new RestTemplate();
+		// 인증 코드 SMS 발송
+		sendSms(request.getPhone(), code);
+	}
 
-        // 요청 파라미터 설정
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("api_key", apiKey);
-        params.add("api_secret", apiSecret);
-        params.add("to", phone);  // 수신 전화번호
-        params.add("from", sender);    // 발신 전화번호
-        params.add("text", "인증 코드: " + code);   // 전송할 메시지
-        params.add("type", "sms");     // SMS 유형
+	// 인증 코드 발송 (Coolsms API 호출)
+	private void sendSms(String phone, String code) {
+		try {
+			DefaultMessageService messageService = NurigoApp.INSTANCE.initialize(apiKey, apiSecret,
+					"https://api.coolsms.co.kr");
+			// Message 객체 생성
+			Message message = new Message();
+			message.setTo(phone); // 수신자 번호
+			message.setFrom(sender); // 발신자 번호
+			message.setText("[웨딩시그널] 본인확인 인증 코드: (" + code+ ") 타인과 공유하지 마세요!"); // 전송할 메시지 내용
 
-        // 요청 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+			// SMS 전송
+			messageService.send(message);
+			System.out.println("SMS 전송 성공!");
+		} catch (Exception e) {
+			System.out.println("SMS 전송 실패: " + e.getMessage());
+			throw new RuntimeException("SMS 전송 실패");
+		}
+	}
 
-        // 요청 본문 설정
-        HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, headers);
+	// 인증 코드 생성
+	private String generateVerificationCode() {
+		Random random = new Random();
+		return String.format("%06d", random.nextInt(999999)); // 6자리 인증 코드 생성
+	}
 
-        // Coolsms API에 POST 요청 보내기
-        String smsApiUrl = "https://api.coolsms.co.kr/send/v2";
-        ResponseEntity<String> response = restTemplate.exchange(
-                smsApiUrl,
-                HttpMethod.POST,
-                requestEntity,
-                String.class
-        );
-
-        // 응답 처리
-        if (response.getStatusCode() == HttpStatus.OK) {
-            System.out.println("SMS 전송 성공: " + response.getBody());
-        } else {
-            System.out.println("SMS 전송 실패: " + response.getBody());
-            throw new RuntimeException("SMS 전송 실패");
-        }
-    }
-
-    // 인증 코드 생성
-    private String generateVerificationCode() {
-        Random random = new Random();
-        return String.format("%06d", random.nextInt(999999));  // 6자리 인증 코드 생성
-    }
-
-    // 인증 코드 검증
-    public boolean verifyCode(VerifyCodeDto request) {
-        String storedCode = redisTemplate.opsForValue().get(request.getPhone());
-        return storedCode != null && storedCode.equals(request.getCode());
-    }
+	// 인증 코드 검증
+	public boolean verifyCode(VerifyCodeDto request) {
+		String storedCode = redisTemplate.opsForValue().get(request.getPhone());
+		return storedCode != null && storedCode.equals(request.getCode());
+	}
 }
