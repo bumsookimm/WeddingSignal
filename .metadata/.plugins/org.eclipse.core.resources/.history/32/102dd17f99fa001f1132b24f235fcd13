@@ -1,5 +1,0 @@
-package com.wsingnal.dto;
-
-public class VerifyCodeDto {
-
-}
