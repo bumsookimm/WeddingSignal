@@ -1,0 +1,65 @@
+package com.wsingnal.service;
+
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import com.coolsms.SmsSender;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+
+import com.wsingnal.dto.PhoneRequestDto;
+import com.wsingnal.dto.VerifyCodeDto;
+
+
+@Service
+public class SmsService {
+
+	@Value("${sms.api.key}")
+    private String apiKey;
+
+    @Value("${sms.api.secret}")
+    private String apiSecret;
+
+    private final RedisTemplate<String, String> redisTemplate;
+
+    public SmsService(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    // 인증 코드 전송
+    public void sendVerificationCode(PhoneRequestDto request) {
+        String code = generateVerificationCode();
+
+        // Redis에 인증 코드 저장 (유효시간: 10분)
+        redisTemplate.opsForValue().set(request.getPhone(), code, 10, TimeUnit.MINUTES);
+
+        // 인증 코드 SMS 발송
+        sendSms(request.getPhone(), code);
+    }
+
+    // 인증 코드 발송 (Coolsms 연동)
+    private void sendSms(String phone, String code) {
+        SmsSender smsSender = new SmsSender(apiKey, apiSecret);
+        String message = "인증 코드: " + code;
+        String sender = "01000000000"; // 발신 번호 설정 (적절히 수정)
+
+        try {
+            smsSender.sendOne(new String[] { phone }, message, sender);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("SMS 전송 실패");
+        }
+    }
+
+    // 인증 코드 생성
+    private String generateVerificationCode() {
+        Random random = new Random();
+        return String.format("%06d", random.nextInt(999999));  // 6자리 인증 코드 생성
+    }
+
+    // 인증 코드 검증
+    public boolean verifyCode(VerifyCodeDto request) {
+        String storedCode = redisTemplate.opsForValue().get(request.getPhone());
+        return storedCode != null && storedCode.equals(request.getCode());
+    }
+}

@@ -1,32 +1,72 @@
 package com.wsingnal.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wsingnal.dto.PhoneRequestDto;
 import com.wsingnal.dto.UserDto;
+import com.wsingnal.dto.VerifyCodeDto;
+import com.wsingnal.service.SmsService;
 import com.wsingnal.service.UserService;
 
-@CrossOrigin(origins = "http://localhost:3000")  // React 앱에서 오는 요청 허용
+@RequestMapping("/api")
 @RestController
 public class WSignalController {
 
-    @Autowired
-    private UserService userService;
-   
-    @PostMapping("/api/signup")
-    public ResponseEntity<String> signUp(@RequestBody UserDto UserDTO) {
-        System.out.println(UserDTO);  // 로그 출력
-        boolean success = userService.registerUser(UserDTO);
-        if (success) {
-            return ResponseEntity.ok("회원가입 성공!");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 사용 중인 이메일입니다.");
-        }
-    }
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private SmsService smsService;
+
+	@PostMapping("/signup")
+	public ResponseEntity<String> signUp(@RequestBody UserDto userDto) {
+
+		// 회원가입 메서드 호출
+		String result = userService.registerUser(userDto);
+
+		// 결과 메시지에 따라 ResponseEntity 설정
+		if (result.equals("회원가입 성공!")) {
+			return ResponseEntity.ok(result); // 회원가입 성공
+		} else {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result); // 중복된 이메일 또는 전화번호
+		}
+	}
+
+	// 인증 코드 전송 API
+	@PostMapping("/sendVerificationCode")
+	public ResponseEntity<String> sendVerificationCode(@RequestBody PhoneRequestDto request) {
+
+		try {
+			System.out.println("requset" + request.getPhone());
+			smsService.sendVerificationCode(request);
+			return ResponseEntity.ok("인증 코드가 전송되었습니다.");
+		} catch (Exception e) {
+			return ResponseEntity.status(500).body("인증 코드 전송에 실패했습니다.");
+		}
+	}
+
+	// 인증 코드 확인 API
+	@PostMapping("/verifyCode")
+	public ResponseEntity<String> verifyCode(@RequestBody VerifyCodeDto request) {
+		if (smsService.verifyCode(request)) {
+			return ResponseEntity.ok("인증 성공");
+		} else {
+			return ResponseEntity.status(400).body("인증 코드가 일치하지 않습니다.");
+		}
+	}
+
+	// 폰넘버 확인 API
+	@PostMapping("/checkPhoneNumber")
+	public String checkPhoneNumber(@RequestBody Map<String, String> request) {
+		String phone = request.get("phone");
+		return userService.checkPhoneNumber(phone);
+	}
 }
