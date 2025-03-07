@@ -3,17 +3,23 @@ import { Link } from 'react-router-dom';
 import '../assets/css/Header.css';
 import LoginPage from './LoginPage';
 import SignUp from './SignUp';  // SignUp 컴포넌트 임포트
+import AgreeModal from './AgreeModal';  // AgreeModal 임포트
 
 function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);  // 회원가입 모달 상태
+  const [isAgreeModalOpen, setIsAgreeModalOpen] = useState(false); // 약관 동의 모달 상태
 
   const handleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
   };
 
   const handleSignUpModal = () => {
-    setIsSignUpModalOpen(!isSignUpModalOpen);  // 회원가입 모달 토글
+    setIsSignUpModalOpen(true);  // 약관 동의가 완료되면 회원가입 모달 열기
+  };
+
+  const handleAgreeModal = () => {
+    setIsAgreeModalOpen(!isAgreeModalOpen);  // 약관 동의 모달 토글
   };
 
   return (
@@ -34,7 +40,7 @@ function Header() {
             <li><Link to="/community">Community</Link></li>
             <li><Link to="/Contact">Contact Us</Link></li>
             <li><button onClick={handleLoginModal}>Log In</button></li>
-            <li><button onClick={handleSignUpModal}>SignUp</button></li> 
+            <li><button onClick={() => setIsAgreeModalOpen(true)}>SignUp</button></li>  {/* 약관 동의 모달 열기 */}
           </ul>
         </nav>
       </div>
@@ -49,12 +55,17 @@ function Header() {
         </div>
       )}
 
+      {/* 약관 동의 모달 */}
+      {isAgreeModalOpen && (
+        <AgreeModal closeModal={handleAgreeModal} openSignUp={handleSignUpModal} />
+      )}
+
       {/* 회원가입 모달 */}
       {isSignUpModalOpen && (
         <div className="login-modal">
           <div className="modal-content">
-            <button className="close-btn" onClick={handleSignUpModal}>X</button>
-            <SignUp closeModal={handleSignUpModal} />
+            <button className="close-btn" onClick={() => setIsSignUpModalOpen(false)}>X</button>
+            <SignUp closeModal={() => setIsSignUpModalOpen(false)} />
           </div>
         </div>
       )}

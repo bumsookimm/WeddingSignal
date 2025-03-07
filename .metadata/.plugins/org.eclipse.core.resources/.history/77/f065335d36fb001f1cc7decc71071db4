@@ -1,0 +1,102 @@
+package com.wsingnal.service;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.wsingnal.dto.PhoneRequestDto;
+import com.wsingnal.dto.VerifyCodeDto;
+
+@Service
+public class SmsService {
+
+    @Value("${sms.api.key}")
+    private String apiKey;
+
+    @Value("${sms.api.secret}")
+    private String apiSecret;
+
+    @Value("${sms.api.sender}")
+    private String sender;
+
+    private final RedisTemplate<String, String> redisTemplate;
+
+    public SmsService(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
+    }
+
+    // 인증 코드 전송
+    public void sendVerificationCode(PhoneRequestDto request) {
+        String code = generateVerificationCode();     
+        System.out.println("code: " + code);
+       
+        // Redis에 인증 코드 저장 (유효시간: 10분)
+        redisTemplate.opsForValue().set(request.getPhone(), code, 3, TimeUnit.MINUTES);
+
+        // 인증 코드 SMS 발송
+        sendSms(request.getPhone(), code);
+    }
+
+    // 인증 코드 발송 (Coolsms API 호출)
+    private void sendSms(String phone, String code) {
+        RestTemplate restTemplate = new RestTemplate();
+
+        String smsApiUrl = "https://api.coolsms.co.kr/sms/2/send";  // 올바른 엔드포인트
+
+        // 요청 데이터 설정 (JSON 형식)
+        Map<String, String> params = new HashMap<>();
+        params.put("api_key", apiKey);
+        params.put("api_secret", apiSecret);
+        params.put("to", phone);
+        params.put("from", sender);
+        params.put("text", "인증 코드: " + code);
+        params.put("type", "SMS");
+
+        // 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        // 요청 본문 설정
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(params, headers);
+
+        // Coolsms API에 POST 요청 보내기
+        ResponseEntity<String> response = restTemplate.exchange(
+                smsApiUrl,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+
+        // 응답 처리
+        if (response.getStatusCode() == HttpStatus.OK) {
+            System.out.println("SMS 전송 성공: " + response.getBody());
+        } else {
+            System.out.println("SMS 전송 실패: " + response.getBody());
+            throw new RuntimeException("SMS 전송 실패");
+        }
+    }
+
+    // 인증 코드 생성
+    private String generateVerificationCode() {
+        Random random = new Random();
+        return String.format("%06d", random.nextInt(999999));  // 6자리 인증 코드 생성
+    }
+
+    // 인증 코드 검증
+    public boolean verifyCode(VerifyCodeDto request) {
+        String storedCode = redisTemplate.opsForValue().get(request.getPhone());
+        return storedCode != null && storedCode.equals(request.getCode());
+    }
+}
