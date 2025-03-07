@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename Java project &apos;wsingnal&apos; to &apos;WS_springboot-backend&apos;&#x0D;&#x0A;- Original element: &apos;wsingnal&apos;&#x0D;&#x0A;- Renamed element: &apos;wsingnal&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename Java project &apos;wsingnal&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=wsingnal" name="WS_springboot-backend" references="true" stamp="1740643826461" version="1.0"/>
-</session>
