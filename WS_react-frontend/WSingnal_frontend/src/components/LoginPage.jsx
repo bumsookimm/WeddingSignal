@@ -10,9 +10,31 @@ const LoginPage = ({ closeModal }) => {
   const [isAgreeModalOpen, setIsAgreeModalOpen] = useState(false); // 동의 모달 상태
   const [isSignUpMode, setIsSignUpMode] = useState(false); // 회원가입 모달 상태
   
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log('로그인 시도:', email, password);
+  
+    try {
+      const response = await fetch('http://localhost:8070/api/checkLogin', {  // Spring 서버 URL
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }), // JSON 형식으로 변환
+        credentials: 'include',
+      });
+  
+      const result = await response.text(); // 서버 응답 받기
+  
+      if (result === 'SUCCESS') {
+        alert('로그인 성공!');
+        // 로그인 후 처리 (예: 메인 페이지로 이동)
+        window.location.href = '/';
+      } else {
+        alert('로그인 실패! 이메일 또는 비밀번호를 확인하세요.');
+      }
+    } catch (error) {
+      console.error('로그인 요청 중 오류 발생:', error);
+    }
   };
 
   const toggleModal = () => {

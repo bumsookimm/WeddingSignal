@@ -36,7 +36,8 @@ public class UserService {
 	public String registerUser(UserDto userDto) {
 	    // 이메일 중복 체크
 	    if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
-	        return "이미 사용 중인 이메일입니다."; // 이메일 중복
+	       
+	    	return "이미 사용 중인 이메일입니다."; // 이메일 중복
 	    }
 
 

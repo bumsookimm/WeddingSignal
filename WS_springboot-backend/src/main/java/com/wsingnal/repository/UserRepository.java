@@ -11,5 +11,6 @@ import com.wsingnal.model.User;
 public interface UserRepository extends JpaRepository<User, String> {
     Optional<User> findByEmail(String email);
     Optional<User> findByPhone(String Phone);
+    Optional<User> findByEmailAndPassword(String email, String password);
 
 }
