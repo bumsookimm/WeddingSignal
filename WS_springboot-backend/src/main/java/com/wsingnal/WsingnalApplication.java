@@ -1,4 +1,4 @@
-package com.example.wsingnal;
+package com.wsingnal;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
