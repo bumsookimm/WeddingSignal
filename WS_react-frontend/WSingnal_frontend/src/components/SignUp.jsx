@@ -125,8 +125,8 @@ const SignUp = ({ closeModal }) => {
         <input type="date" {...register("birthdate")} />
         <label>성별</label>
         <select {...register("gender")}>
-          <option value="male">남성</option>
-          <option value="female">여성</option>
+          <option value="남성">남성</option>
+          <option value="여성">여성</option>
         </select>
 
         <input id="phone" type="text" {...register("phone")} placeholder="휴대폰 번호" />

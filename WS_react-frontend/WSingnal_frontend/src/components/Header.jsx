@@ -2,55 +2,58 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../assets/css/Header.css';
 import LoginPage from './LoginPage';
-import SignUp from './SignUp';  // SignUp 컴포넌트 임포트
-import AgreeModal from './AgreeModal';  // AgreeModal 임포트
+import SignUp from './SignUp';
+import AgreeModal from './AgreeModal';
+import MyPageSidebar from './MyPageSidebar';  
 
 function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);  // 회원가입 모달 상태
-  const [isAgreeModalOpen, setIsAgreeModalOpen] = useState(false); // 약관 동의 모달 상태
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+  const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false);
+  const [isAgreeModalOpen, setIsAgreeModalOpen] = useState(false);
+  const [isMyPageOpen, setIsMyPageOpen] = useState(false);  
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // 로그인 상태 확인 함수
+  useEffect(() => {
+    checkLoginStatus();
+  }, []);
+
   const checkLoginStatus = async () => {
     try {
       const response = await fetch('http://localhost:8070/api/checkLoginStatus', {
         method: 'GET',
-        credentials: 'include' // 세션 쿠키 포함
+        credentials: 'include'
       });
       const result = await response.text();
-      setIsLoggedIn(result === 'LOGGED_IN'); // 로그인 상태에 따라 설정
+      setIsLoggedIn(result === 'LOGGED_IN');
     } catch (error) {
       console.error('Error checking login status:', error);
     }
   };
-
-  useEffect(() => {
-    checkLoginStatus(); // 컴포넌트 마운트 시 로그인 상태 체크
-  }, []);
-
 
   const handleLoginModal = () => {
     setIsLoginModalOpen(!isLoginModalOpen);
   };
 
   const handleSignUpModal = () => {
-    setIsSignUpModalOpen(true);  // 약관 동의가 완료되면 회원가입 모달 열기
+    setIsSignUpModalOpen(true);
   };
 
   const handleAgreeModal = () => {
-    setIsAgreeModalOpen(!isAgreeModalOpen);  // 약관 동의 모달 토글
+    setIsAgreeModalOpen(!isAgreeModalOpen);
   };
 
-  const handleMyPageRedirect = () => {
-    window.location.href = '/myPage'; // My Page로 리다이렉트
+  const handleMyPageToggle = () => {
+    setIsMyPageOpen(!isMyPageOpen);
   };
-  
+
   const handleLogout = async () => {
     try {
-      // 로그아웃 API 호출
-      await fetch('/api/logout');
-      setIsLoggedIn(false); // 로그아웃 후 로그인 상태 변경
+      await fetch('http://localhost:8070/api/logout', {
+        method: 'GET',
+        credentials: 'include',  // 쿠키와 세션을 서버와 공유
+      });
+      setIsLoggedIn(false);  // 로그아웃 후 상태 업데이트
+      window.location.reload();  // 새로고침하여 상태 반영
     } catch (error) {
       console.error('Error logging out:', error);
     }
@@ -59,7 +62,6 @@ function Header() {
   return (
     <header className="header">
       <div className="nav-container">
-        {/* 로고 영역 */}
         <div className="nav-logo">
           <Link to="/">
             <img src="/images/ws_logo.png" alt="Logo" />
@@ -73,23 +75,21 @@ function Header() {
             <li><Link to="/posts">Post</Link></li>
             <li><Link to="/community">Community</Link></li>
             <li><Link to="/Contact">Contact Us</Link></li>
-            {/* 로그인/로그아웃 버튼 */}
             {isLoggedIn ? (
               <>
-                <li><button onClick={handleMyPageRedirect}>My Page</button></li>  {/* My Page 버튼 */}
-                <li><button onClick={handleLogout}>Log Out</button></li> {/* 로그아웃 버튼 */}
+                <li><button onClick={handleMyPageToggle}>My Page</button></li>
+                <li><button onClick={handleLogout}>Log Out</button></li>
               </>
             ) : (
               <>
                 <li><button onClick={handleLoginModal}>Log In</button></li>
-                <li><button onClick={() => setIsAgreeModalOpen(true)}>SignUp</button></li>  {/* 약관 동의 모달 열기 */}
+                <li><button onClick={() => setIsAgreeModalOpen(true)}>SignUp</button></li>
               </>
             )}
           </ul>
         </nav>
       </div>
 
-      {/* 로그인 모달 */}
       {isLoginModalOpen && (
         <div className="login-modal">
           <div className="modal-content">
@@ -99,12 +99,7 @@ function Header() {
         </div>
       )}
 
-      {/* 약관 동의 모달 */}
-      {isAgreeModalOpen && (
-        <AgreeModal closeModal={handleAgreeModal} openSignUp={handleSignUpModal} />
-      )}
-
-      {/* 회원가입 모달 */}
+      {isAgreeModalOpen && <AgreeModal closeModal={handleAgreeModal} openSignUp={handleSignUpModal} />}
       {isSignUpModalOpen && (
         <div className="login-modal">
           <div className="modal-content">
@@ -113,6 +108,9 @@ function Header() {
           </div>
         </div>
       )}
+
+      {/* 마이페이지 사이드바 */}
+      <MyPageSidebar isOpen={isMyPageOpen} closeSidebar={handleMyPageToggle} />
     </header>
   );
 }

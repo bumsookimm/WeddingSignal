@@ -86,7 +86,7 @@ const LoginPage = ({ closeModal }) => {
             <button type="submit" className="submit-btn">로그인</button>
           </form>
 
-          {/* 로그인 모드일 때만 보이는 3개의 버튼 */}
+         
           <div className="login-options">
             <button onClick={openAgreeModal} className="register-btn">
               회원가입
