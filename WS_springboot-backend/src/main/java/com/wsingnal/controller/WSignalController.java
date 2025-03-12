@@ -1,6 +1,7 @@
 package com.wsingnal.controller;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,10 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.wsingnal.dto.PhoneRequestDto;
 import com.wsingnal.dto.UserDto;
 import com.wsingnal.dto.VerifyCodeDto;
+import com.wsingnal.model.User;
+import com.wsingnal.repository.UserRepository;
 import com.wsingnal.service.LoginService;
 import com.wsingnal.service.SmsService;
 import com.wsingnal.service.UserService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RequestMapping("/api")
@@ -32,7 +37,10 @@ public class WSignalController {
 
 	@Autowired
 	private LoginService loginService;
-
+	
+	@Autowired
+	private UserRepository userRepository;
+	
 	@PostMapping("/signup")
 	public ResponseEntity<String> signUp(@RequestBody UserDto userDto) {
 
@@ -108,9 +116,45 @@ public class WSignalController {
 	}
 	
 	@GetMapping("/logout")
-	public static void logout(HttpSession session) {
-		// 세션 무효화 (로그아웃 처리)
-		session.invalidate();
-		
+	public void logout(HttpSession session, HttpServletResponse response) {
+	    // 세션 무효화 (로그아웃 처리)
+	    session.invalidate();
+
+	    // JSESSIONID 쿠키 삭제 (세션 쿠키)
+	    Cookie sessionCookie = new Cookie("JSESSIONID", null);
+	    sessionCookie.setMaxAge(0);  // 즉시 만료
+	    sessionCookie.setPath("/");  // 전체 경로에 적용
+	    response.addCookie(sessionCookie);
+
+	    // 기타 쿠키 삭제 (예: 로그인 상태를 저장하는 다른 쿠키)
+	    Cookie otherCookie = new Cookie("otherCookieName", null);
+	    otherCookie.setMaxAge(0);
+	    otherCookie.setPath("/");
+	    response.addCookie(otherCookie);
+
+	    // 응답 코드 추가 (옵션)
+	    response.setStatus(HttpServletResponse.SC_OK);  // 상태 코드 200
 	}
+
+
+	@GetMapping("/userInfo")
+	public ResponseEntity<User> getUserInfo(HttpSession session) {
+	    // 세션에서 로그인된 이메일을 가져옴
+	    String email = (String) session.getAttribute("loginUser");
+
+	    if (email == null) {
+	        return ResponseEntity.status(401).body(null); // Unauthorized
+	    }
+
+	    // 이메일로 사용자 조회
+	    Optional<User> userOptional = userRepository.findByEmail(email);
+	    if (userOptional.isPresent()) {
+	        return ResponseEntity.ok(userOptional.get()); // 사용자 정보 반환
+	    } else {
+	        return ResponseEntity.status(404).body(null); // 사용자 미발견
+	    }
+	}
+
+
+
 }

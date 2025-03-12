@@ -1,0 +1,58 @@
+/* profilePage.css*/
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+  }
+  
+  /* 프로필 페이지 스타일 */
+  .profile-page {
+    width: 80%;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 헤더 스타일 */
+  .profile-page h2 {
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* 프로필 정보 영역 스타일 */
+  .profile-info {
+    margin-bottom: 30px;
+  }
+  
+  /* 각 항목에 대한 스타일 */
+  .profile-info p {
+    font-size: 16px;
+    color: #555;
+    margin: 10px 0;
+  }
+  
+  .profile-info strong {
+    color: #333;
+  }
+  
+  /* 버튼 스타일 */
+  button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    color: white;
+    background-color: #007BFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  

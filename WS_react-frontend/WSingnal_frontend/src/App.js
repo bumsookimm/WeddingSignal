@@ -5,6 +5,10 @@ import MainPage from './pages/MainPage';   // MainPage 컴포넌트 임포트
 import LoginPage from './components/LoginPage'; // LoginPage 컴포넌트 임포트
 import SignUp from './components/SignUp'; // LoginPage 컴포넌트 임포트
 
+import ProfilePage from './pages/ProfilePage';
+import ResumePage from './pages/ResumePage';
+import PaymentPage from './pages/PaymentPage';
+
 function App() {
   return (
     <Router>
@@ -13,7 +17,11 @@ function App() {
         <Route path="/" element={<MainPage />} />  {/* 메인 페이지 */}
         <Route path="/login" element={<LoginPage />} />  {/* 로그인 페이지 */}
         <Route path="/signup" element={<SignUp />} />  {/* 회원가입 페이지 */}
-
+      
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/resume" element={<ResumePage />} />
+        <Route path="/payment" element={<PaymentPage />} />
+     
       </Routes>
     </Router>
   );
