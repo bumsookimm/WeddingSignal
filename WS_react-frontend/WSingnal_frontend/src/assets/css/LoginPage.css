@@ -148,3 +148,18 @@
 .forgot-btn:hover {
   background-color: #ddd; /* 더 밝은 그레이 */
 }
+
+
+/* 로그인 모달 */
+.login-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* 로그인 모달이 기본적으로 1000으로 설정 */
+}

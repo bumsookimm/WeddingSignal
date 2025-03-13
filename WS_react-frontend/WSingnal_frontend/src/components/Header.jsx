@@ -5,6 +5,7 @@ import LoginPage from './LoginPage';
 import SignUp from './SignUp';
 import AgreeModal from './AgreeModal';
 import MyPageSidebar from './MyPageSidebar';  
+import { useNavigate } from 'react-router-dom';
 
 function Header() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -12,7 +13,8 @@ function Header() {
   const [isAgreeModalOpen, setIsAgreeModalOpen] = useState(false);
   const [isMyPageOpen, setIsMyPageOpen] = useState(false);  
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+  const navigate = useNavigate();
+ 
   useEffect(() => {
     checkLoginStatus();
   }, []);
@@ -53,6 +55,7 @@ function Header() {
         credentials: 'include',  // 쿠키와 세션을 서버와 공유
       });
       setIsLoggedIn(false);  // 로그아웃 후 상태 업데이트
+      navigate('/');
       window.location.reload();  // 새로고침하여 상태 반영
     } catch (error) {
       console.error('Error logging out:', error);
@@ -89,25 +92,33 @@ function Header() {
           </ul>
         </nav>
       </div>
+     
+      {isAgreeModalOpen && (
+  <div className="agree-modal">
+    <div className="modal-content agree-modal-content">
+     
+      <AgreeModal closeModal={handleAgreeModal} openSignUp={handleSignUpModal} />
+    </div>
+  </div>
+)}
 
-      {isLoginModalOpen && (
-        <div className="login-modal">
-          <div className="modal-content">
-            <button className="close-btn" onClick={handleLoginModal}>X</button>
-            <LoginPage closeModal={handleLoginModal} />
-          </div>
-        </div>
-      )}
+{isLoginModalOpen && (
+  <div className="login-modal">
+    <div className="modal-content login-modal-content">
+      <button className="close-btn" onClick={handleLoginModal}>X</button>
+      <LoginPage closeModal={handleLoginModal} />
+    </div>
+  </div>
+)}
 
-      {isAgreeModalOpen && <AgreeModal closeModal={handleAgreeModal} openSignUp={handleSignUpModal} />}
-      {isSignUpModalOpen && (
-        <div className="login-modal">
-          <div className="modal-content">
-            <button className="close-btn" onClick={() => setIsSignUpModalOpen(false)}>X</button>
-            <SignUp closeModal={() => setIsSignUpModalOpen(false)} />
-          </div>
-        </div>
-      )}
+{isSignUpModalOpen && (
+  <div className="login-modal">
+    <div className="modal-content sign-up-modal-content">
+      <button className="close-btn" onClick={() => setIsSignUpModalOpen(false)}>X</button>
+      <SignUp closeModal={() => setIsSignUpModalOpen(false)} />
+    </div>
+  </div>
+)}
 
       {/* 마이페이지 사이드바 */}
       <MyPageSidebar isOpen={isMyPageOpen} closeSidebar={handleMyPageToggle} />

@@ -12,11 +12,11 @@ const MyPageSidebar = ({ isOpen, closeSidebar }) => {
 
   return (
     <div className={`sidebar ${isOpen ? 'open' : ''}`}>
-      <button onClick={closeSidebar}>X</button>
+      <button className="sidebar-close-btn" onClick={closeSidebar}>X</button>
       <ul>
-        <li><button onClick={() => handleNavigation('/profile')}>회원정보</button></li>
-        <li><button onClick={() => handleNavigation('/resume')}>자기소개서</button></li>
-        <li><button onClick={() => handleNavigation('/payment')}>결제내역</button></li>
+        <li><button className="sidebar-btn" onClick={() => handleNavigation('/profile')}>회원정보</button></li>
+        <li><button className="sidebar-btn" onClick={() => handleNavigation('/resume')}>자기소개서</button></li>
+        <li><button className="sidebar-btn" onClick={() => handleNavigation('/payment')}>결제내역</button></li>
       </ul>
     </div>
   );

@@ -72,18 +72,6 @@
   background-color: #f8c8d7;
 }
 
-/* 로그인 모달 */
-.login-modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
 
 .modal-content {
   background-color: white;
@@ -91,15 +79,23 @@
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 400px;
-  position: relative;
+  position: relative; /* 'X' 버튼을 절대 위치로 설정할 수 있도록 */
 }
 
 .close-btn {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
+  top: 10px;  /* 모달 상단에서 10px 떨어지게 */
+  right: 10px; /* 모달 오른쪽에서 10px 떨어지게 */
   border: none;
-  font-size: 20px;
+  background: none;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
   cursor: pointer;
+
+}
+
+/* 동의 모달 */
+.agree-modal {
+  z-index: 9999; /* 동의 모달이 로그인 모달보다 위에 뜨도록 설정 */
 }
