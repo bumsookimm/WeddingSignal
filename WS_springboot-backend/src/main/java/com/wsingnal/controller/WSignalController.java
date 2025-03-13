@@ -1,5 +1,7 @@
 package com.wsingnal.controller;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import com.wsingnal.dto.VerifyCodeDto;
 import com.wsingnal.model.User;
 import com.wsingnal.repository.UserRepository;
 import com.wsingnal.service.LoginService;
+import com.wsingnal.service.PasswordChangeService;
 import com.wsingnal.service.SmsService;
 import com.wsingnal.service.UserService;
 
@@ -37,10 +40,13 @@ public class WSignalController {
 
 	@Autowired
 	private LoginService loginService;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
+	@Autowired
+	private PasswordChangeService passwordChangeService;
+
 	@PostMapping("/signup")
 	public ResponseEntity<String> signUp(@RequestBody UserDto userDto) {
 
@@ -105,56 +111,83 @@ public class WSignalController {
 	// 로그인 상태 확인 API
 	@GetMapping("/checkLoginStatus")
 	public ResponseEntity<String> checkLoginStatus(HttpSession session) {
-	    // 세션에 "loginUser"가 존재하면 로그인된 상태
-	    String loginUser = (String) session.getAttribute("loginUser");
-	    System.out.println("세션에서 가져옴 : " + loginUser);
-	    if (loginUser != null) {
-	        return ResponseEntity.ok("LOGGED_IN"); // 로그인된 상태
-	    } else {
-	        return ResponseEntity.ok("LOGGED_OUT"); // 로그아웃 상태
-	    }
+		// 세션에 "loginUser"가 존재하면 로그인된 상태
+		String loginUser = (String) session.getAttribute("loginUser");
+		System.out.println("세션에서 가져옴 : " + loginUser);
+		if (loginUser != null) {
+			return ResponseEntity.ok("LOGGED_IN"); // 로그인된 상태
+		} else {
+			return ResponseEntity.ok("LOGGED_OUT"); // 로그아웃 상태
+		}
 	}
-	
+
 	@GetMapping("/logout")
 	public void logout(HttpSession session, HttpServletResponse response) {
-	    // 세션 무효화 (로그아웃 처리)
-	    session.invalidate();
+		// 세션 무효화 (로그아웃 처리)
+		session.invalidate();
 
-	    // JSESSIONID 쿠키 삭제 (세션 쿠키)
-	    Cookie sessionCookie = new Cookie("JSESSIONID", null);
-	    sessionCookie.setMaxAge(0);  // 즉시 만료
-	    sessionCookie.setPath("/");  // 전체 경로에 적용
-	    response.addCookie(sessionCookie);
+		// JSESSIONID 쿠키 삭제 (세션 쿠키)
+		Cookie sessionCookie = new Cookie("JSESSIONID", null);
+		sessionCookie.setMaxAge(0); // 즉시 만료
+		sessionCookie.setPath("/"); // 전체 경로에 적용
+		response.addCookie(sessionCookie);
 
-	    // 기타 쿠키 삭제 (예: 로그인 상태를 저장하는 다른 쿠키)
-	    Cookie otherCookie = new Cookie("otherCookieName", null);
-	    otherCookie.setMaxAge(0);
-	    otherCookie.setPath("/");
-	    response.addCookie(otherCookie);
+		// 기타 쿠키 삭제 (예: 로그인 상태를 저장하는 다른 쿠키)
+		Cookie otherCookie = new Cookie("otherCookieName", null);
+		otherCookie.setMaxAge(0);
+		otherCookie.setPath("/");
+		response.addCookie(otherCookie);
 
-	    // 응답 코드 추가 (옵션)
-	    response.setStatus(HttpServletResponse.SC_OK);  // 상태 코드 200
+		// 응답 코드 추가 (옵션)
+		response.setStatus(HttpServletResponse.SC_OK); // 상태 코드 200
 	}
-
 
 	@GetMapping("/userInfo")
 	public ResponseEntity<User> getUserInfo(HttpSession session) {
-	    // 세션에서 로그인된 이메일을 가져옴
-	    String email = (String) session.getAttribute("loginUser");
+		// 세션에서 로그인된 이메일을 가져옴
+		String email = (String) session.getAttribute("loginUser");
 
-	    if (email == null) {
-	        return ResponseEntity.status(401).body(null); // Unauthorized
-	    }
+		if (email == null) {
+			return ResponseEntity.status(401).body(null); // Unauthorized
+		}
 
-	    // 이메일로 사용자 조회
-	    Optional<User> userOptional = userRepository.findByEmail(email);
-	    if (userOptional.isPresent()) {
-	        return ResponseEntity.ok(userOptional.get()); // 사용자 정보 반환
-	    } else {
-	        return ResponseEntity.status(404).body(null); // 사용자 미발견
-	    }
+		// 이메일로 사용자 조회
+		Optional<User> userOptional = userRepository.findByEmail(email);
+		if (userOptional.isPresent()) {
+			return ResponseEntity.ok(userOptional.get()); // 사용자 정보 반환
+		} else {
+			return ResponseEntity.status(404).body(null); // 사용자 미발견
+		}
 	}
 
+	@PostMapping("/verifyCurrentPassword")
+	public ResponseEntity<Map<String, Object>> verifyCurrentPassword(@RequestBody Map<String, String> request,
+			HttpSession session) {
+		// 세션에서 로그인된 이메일을 가져옴
+		String email = (String) session.getAttribute("loginUser");
 
+		// 로그인이 되어 있지 않으면 에러 반환
+		if (email == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Collections.singletonMap("error", "로그인이 필요합니다"));
+		}
+
+		// 사용자가 입력한 비밀번호
+		String password = request.get("currentPassword");
+
+		// 비밀번호 검증
+		boolean isPasswordCorrect = passwordChangeService.verifyCurrentPassword(email, password);
+
+		// 비밀번호가 맞으면 성공 응답
+		if (isPasswordCorrect) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", true); // 비밀번호 확인 성공
+			return ResponseEntity.ok(response);
+		}
+
+		// 비밀번호가 틀리면 실패 응답
+		Map<String, Object> errorResponse = new HashMap<>();
+		errorResponse.put("error", "현재 비밀번호가 올바르지 않습니다");
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+	}
 
 }
