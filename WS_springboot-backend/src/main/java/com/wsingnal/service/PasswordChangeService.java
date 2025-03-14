@@ -2,6 +2,7 @@ package com.wsingnal.service;
 
 import java.util.Optional;
 
+import org.apache.catalina.startup.ClassLoaderFactory.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +30,25 @@ public class PasswordChangeService {
         
         return false; // 사용자가 없으면 비밀번호 검증 실패
     }
+
+    
+    public String changePassword(String newPassword, String email) {
+    	
+    	Optional<User> user = userRepository.findByEmail(email);
+    	
+    	if(user.isPresent()) {
+    		String encodedPassword = passwordEncoder.encode(newPassword);
+    		userRepository.updatePassword(email, encodedPassword);
+    	return "성공";
+    		
+    	}else {
+    	
+    		System.out.println("유저가 없습니다");
+    	return "실패";
+    	}
+    	
+    }
+
 }
 	
 	

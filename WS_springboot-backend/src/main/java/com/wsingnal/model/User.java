@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -16,12 +18,14 @@ import lombok.Setter;
 @Table(name = "users")
 public class User {
 
-    @Id
-    private String id;
-
+	@Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  
+    private int id;  
+    
+    private String user_code;
     private String email;
     private String password;
-    private String nickname;
+    private String name;
     private Date birthdate;
     private String gender;
     private String phone;
@@ -32,6 +36,6 @@ public class User {
     
     @PrePersist
     public void generateUUID() {
-        this.id = UUID.randomUUID().toString();  // UUID 자동 생성
+        this.user_code = UUID.randomUUID().toString();  // UUID 자동 생성
     }
 }

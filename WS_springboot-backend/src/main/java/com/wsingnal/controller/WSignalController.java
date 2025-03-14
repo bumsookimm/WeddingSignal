@@ -14,14 +14,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import com.wsingnal.dto.PhoneRequestDto;
 import com.wsingnal.dto.UserDto;
+import com.wsingnal.dto.UserResumeDto;
 import com.wsingnal.dto.VerifyCodeDto;
 import com.wsingnal.model.User;
 import com.wsingnal.repository.UserRepository;
 import com.wsingnal.service.LoginService;
 import com.wsingnal.service.PasswordChangeService;
 import com.wsingnal.service.SmsService;
+import com.wsingnal.service.UserResumeService;
 import com.wsingnal.service.UserService;
 
 import jakarta.servlet.http.Cookie;
@@ -46,6 +49,9 @@ public class WSignalController {
 
 	@Autowired
 	private PasswordChangeService passwordChangeService;
+
+	@Autowired
+	private UserResumeService userResumeService;
 
 	@PostMapping("/signup")
 	public ResponseEntity<String> signUp(@RequestBody UserDto userDto) {
@@ -190,4 +196,42 @@ public class WSignalController {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
 	}
 
+	@PostMapping("/changePassword")
+	public ResponseEntity<Map<String, Object>> changePassword(@RequestBody Map<String, String> request,
+			HttpSession session) {
+
+		String newPassword = request.get("newPassword");
+		String email = (String) session.getAttribute("loginUser");
+
+		String verifyPassword = passwordChangeService.changePassword(newPassword, email);
+		if (verifyPassword.equals("성공")) {
+			Map<String, Object> response = new HashMap<>();
+			response.put("success", true);
+			return ResponseEntity.ok(response);
+		} else {
+			Map<String, Object> errorResponse = new HashMap<>();
+			errorResponse.put("error", "현재 비밀번호가 올바르지 않습니다");
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+		}
+	}
+
+	@PostMapping("/resume/save")
+	public ResponseEntity<Map<String, Object>> saveResume(@RequestBody UserResumeDto userResumeDto, HttpSession session){
+		String loginUser = (String) session.getAttribute("loginUser");
+		System.out.println("loginUser: "+loginUser);
+		String result = userResumeService.saveResume(userResumeDto, loginUser);
+
+		System.out.println("userResumeDto: "+userResumeDto);
+	   
+		Map<String, Object> response = new HashMap<>();
+	    if (result != null) {
+	        response.put("success", true);
+	      
+	    } else {
+	        response.put("success", false);
+	       
+	    }
+
+	    return ResponseEntity.ok(response);
+	}
 }

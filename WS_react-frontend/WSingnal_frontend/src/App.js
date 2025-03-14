@@ -6,6 +6,7 @@ import LoginPage from './components/LoginPage'; // LoginPage 컴포넌트 임포
 import SignUp from './components/SignUp'; // LoginPage 컴포넌트 임포트
 
 import ProfilePage from './pages/ProfilePage';
+import ResumePage from './pages/ResumePage';
 
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />  {/* 회원가입 페이지 */}
       
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/resume" element={<ResumePage />} />
 
      
       </Routes>
