@@ -12,8 +12,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class UserDto {
-
-	 @Email(message = "유효한 이메일을 입력하세요")
+		
+	    private String id;
+	
+	 	@Email(message = "유효한 이메일을 입력하세요")
 	    private String email;
 
 	    @NotEmpty(message = "비밀번호를 입력하세요")
@@ -23,8 +25,8 @@ public class UserDto {
 	    @NotEmpty(message = "비밀번호 확인을 입력하세요")
 	    private String confirmPassword;
 
-	    @NotEmpty(message = "닉네임을 입력하세요")
-	    private String nickname;
+	    @NotEmpty(message = "이름을 입력하세요")
+	    private String name;
 
 	    @NotNull(message = "생년월일을 입력하세요")
 	    private Date birthdate;

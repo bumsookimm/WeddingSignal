@@ -46,17 +46,20 @@ public class UserService {
 
 	    // 사용자 객체 생성 및 저장
 	    User user = new User();
-	    user.setId(UUID.randomUUID().toString());
+	    
+	    
+	    user.setUser_code(UUID.randomUUID().toString());
 	    user.setEmail(userDto.getEmail());
 	    user.setPassword(encodedPassword);
-	    user.setNickname(userDto.getNickname());
+	    user.setName(userDto.getName());
 	    user.setBirthdate(userDto.getBirthdate());
 	    user.setGender(userDto.getGender());
 	    user.setPhone(userDto.getPhone());
 	    user.setCreatedAt(new Date());
-	    user.setUpdatedAt(new Date());
+	    
 
 	    userRepository.save(user);
+	  
 	    return "회원가입 성공!"; // 성공 메시지
 	}
 }

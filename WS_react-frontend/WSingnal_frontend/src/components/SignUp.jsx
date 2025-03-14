@@ -17,9 +17,9 @@ const schema = z.object({
     .regex(/[@$!%*?&]/, "특수문자를 포함해야 합니다"),
   
   confirmPassword: z.string(),
-  nickname: z.string().min(2, "이름은 최소 2자 이상이어야 합니다"),
+  name: z.string().min(2, "이름은 최소 2자 이상이어야 합니다"),
   birthdate: z.string(),
-  gender: z.enum(["male", "female"], { required_error: "성별을 선택하세요" }),
+  gender: z.enum(["남성", "여성"], { required_error: "성별을 선택하세요" }),
   phone: z.string().min(10, "휴대폰 번호를 입력하세요"),
   agree: z.literal(true, { errorMap: () => ({ message: "약관에 동의해야 합니다" }) })
 }).refine((data) => data.password === data.confirmPassword, {
@@ -118,8 +118,8 @@ const SignUp = ({ closeModal }) => {
         <input type="password" {...register("confirmPassword")} placeholder="비밀번호 확인" />
         {errors.confirmPassword && <p>{errors.confirmPassword.message}</p>}
 
-        <input type="text" {...register("nickname")} placeholder="이름" />
-        {errors.nickname && <p>{errors.nickname.message}</p>}
+        <input type="text" {...register("name")} placeholder="이름" />
+        {errors.name && <p>{errors.name.message}</p>}
 
         <label>생년월일</label>
         <input type="date" {...register("birthdate")} />
