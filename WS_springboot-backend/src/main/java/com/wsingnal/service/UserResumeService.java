@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.wsingnal.dto.UserResumeDto;
-import com.wsingnal.model.User;
-import com.wsingnal.model.UserResume;
+import com.wsingnal.entity.User;
+import com.wsingnal.entity.UserResume;
 import com.wsingnal.repository.UserRepository;
 import com.wsingnal.repository.UserResumeRepository;
 
@@ -43,7 +43,7 @@ public class UserResumeService {
             // UserResume 객체에 값 설정
             userResume.setUser(user);
             userResume.setMbti(userResumeDto.getMbti());
-            userResume.setHeigh(userResumeDto.getHeigh());
+            userResume.setHeight(userResumeDto.getHeight());
             userResume.setRegion(userResumeDto.getRegion());
             userResume.setBirthdate(userResumeDto.getBirthdate());
             userResume.setIntroduction(userResumeDto.getIntroduction());

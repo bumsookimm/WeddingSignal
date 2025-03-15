@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.wsingnal.model.User;
+import com.wsingnal.entity.User;
 import com.wsingnal.repository.UserRepository;
 
 @Service

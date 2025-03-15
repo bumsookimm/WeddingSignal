@@ -2,6 +2,7 @@ package com.wsingnal.controller;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -14,15 +15,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.wsingnal.dto.PhoneRequestDto;
 import com.wsingnal.dto.UserDto;
 import com.wsingnal.dto.UserResumeDto;
 import com.wsingnal.dto.VerifyCodeDto;
-import com.wsingnal.model.User;
+import com.wsingnal.entity.User;
 import com.wsingnal.repository.UserRepository;
 import com.wsingnal.service.LoginService;
 import com.wsingnal.service.PasswordChangeService;
+import com.wsingnal.service.ResumeViewService;
 import com.wsingnal.service.SmsService;
 import com.wsingnal.service.UserResumeService;
 import com.wsingnal.service.UserService;
@@ -53,6 +54,10 @@ public class WSignalController {
 	@Autowired
 	private UserResumeService userResumeService;
 
+	@Autowired
+	private ResumeViewService resumeViewService;
+	
+	
 	@PostMapping("/signup")
 	public ResponseEntity<String> signUp(@RequestBody UserDto userDto) {
 
@@ -234,4 +239,27 @@ public class WSignalController {
 
 	    return ResponseEntity.ok(response);
 	}
+
+	@GetMapping("/resume")
+	public ResponseEntity<?> ResumeView (HttpSession session){
+		String loginUser = (String) session.getAttribute("loginUser");
+		
+        if (loginUser == null) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "로그인이 필요합니다");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+        }
+
+        List<UserResumeDto> userResume = resumeViewService.resumView(loginUser);
+		
+        System.out.println("userResume: "+userResume);
+        
+        return ResponseEntity.ok(userResume.get(0));
+		
+	
+	
+	}
+	
+
+
 }

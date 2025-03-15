@@ -1,142 +1,114 @@
-import React, { useState } from 'react';
-import axios from 'axios'; // axios 추가
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../assets/css/ResumePage.css';
 
 const ResumePage = () => {
   const [formData, setFormData] = useState({
-    photo1: '',
-    photo2: '',
-    mbti: '',
-    height: '',
-    birthdate: '',
-    introduction: '',
-    region: '',
+    photo1: "",
+    photo2: "",
+    mbti: "",
+    height: "",
+    birthdate: "",
+    introduction: "",
+    region: "",
   });
+
+  useEffect(() => {
+    const fetchResume = async () => {
+      try {
+        const response = await axios.get("http://localhost:8070/api/resume", {
+          withCredentials: true,
+        });
+        
+        if (response.status === 200) {
+          setFormData(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching resume:", error);
+      }
+    };
+
+    fetchResume();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
   };
 
-  const handleFileChange = (e, photoNumber) => {
+  const handleFileChange = (e, photoKey) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({
-        ...formData,
-        [photoNumber]: URL.createObjectURL(file),
-      });
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          [photoKey]: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
     }
   };
 
   const handleSave = async () => {
-    const resumeData = {
-      photo1: formData.photo1, // base64 또는 이미지 URL
-      photo2: formData.photo2, // base64 또는 이미지 URL
-      mbti: formData.mbti,
-      height: formData.height,
-      birthdate: formData.birthdate,
-      introduction: formData.introduction,
-      region: formData.region,
-    };
-  
     try {
-        const response = await axios.post('http://localhost:8070/api/resume/save', resumeData, {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          withCredentials: true,
-        });
-    
-        if (response.data.success) {
-          alert('자기소개서가 저장되었습니다!');
-        }
-      } catch (error) {
-        console.error('Error saving resume:', error);
-        alert('자기소개서를 저장하는 데 실패했습니다.');
+      const response = await axios.post("http://localhost:8070/api/resume/save", formData, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+
+      if (response.data.success) {
+        alert("자기소개서가 저장되었습니다!");
       }
-    };
+    } catch (error) {
+      console.error("Error saving resume:", error);
+      alert("자기소개서를 저장하는 데 실패했습니다.");
+    }
+  };
 
   return (
     <div className="resume-page">
       <h2>자기소개서</h2>
       <form className="resume-form">
         <div className="form-group photos">
-          <div className="photo-box">
+          {["photo1", "photo2"].map((photoKey) => (
+            <div className="photo-box" key={photoKey}>
+              <input
+                type="file"
+                accept="image/*"
+                id={photoKey}
+                onChange={(e) => handleFileChange(e, photoKey)}
+                className="file-input"
+              />
+              {formData[photoKey] ? (
+                <img src={formData[photoKey]} alt={photoKey} className="photo-preview" />
+              ) : (
+                <span>+ 사진 추가</span>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {[
+          { label: "지역", name: "region", type: "text", placeholder: "거주 지역을 입력하세요" },
+          { label: "MBTI", name: "mbti", type: "text", placeholder: "MBTI를 입력하세요" },
+          { label: "키", name: "height", type: "text", placeholder: "키를 입력하세요" },
+          { label: "생년월일", name: "birthdate", type: "date" },
+        ].map(({ label, name, type, placeholder }) => (
+          <div className="form-group" key={name}>
+            <label>{label}</label>
             <input
-              type="file"
-              accept="image/*"
-              id="photo1"
-              onChange={(e) => handleFileChange(e, 'photo1')}
-              className="file-input"
+              type={type}
+              name={name}
+              value={formData[name]}
+              onChange={handleChange}
+              placeholder={placeholder || ""}
             />
-            {formData.photo1 ? (
-              <img src={formData.photo1} alt="Photo 1" className="photo-preview" />
-            ) : (
-              <span>+ 사진 추가</span>
-            )}
           </div>
-
-          <div className="photo-box">
-            <input
-              type="file"
-              accept="image/*"
-              id="photo2"
-              onChange={(e) => handleFileChange(e, 'photo2')}
-              className="file-input"
-            />
-            {formData.photo2 ? (
-              <img src={formData.photo2} alt="Photo 2" className="photo-preview" />
-            ) : (
-              <span>+ 사진 추가</span>
-            )}
-          </div>
-        </div>
-        
-        <div className="form-group">
-          <label>지역</label>
-          <input
-            type="text"
-            name="region"
-            value={formData.region}
-            onChange={handleChange}
-            placeholder="거주 지역을 입력하세요"
-          />
-        </div>
-        
-        <div className="form-group">
-          <label>MBTI</label>
-          <input
-            type="text"
-            name="mbti"
-            value={formData.mbti}
-            onChange={handleChange}
-            placeholder="MBTI를 입력하세요"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>키</label>
-          <input
-            type="text"
-            name="height"
-            value={formData.height}
-            onChange={handleChange}
-            placeholder="키를 입력하세요"
-          />
-        </div>
-
-        <div className="form-group">
-          <label>생년월일</label>
-          <input
-            type="date"
-            name="birthdate"
-            value={formData.birthdate}
-            onChange={handleChange}
-          />
-        </div>
+        ))}
 
         <div className="form-group">
           <label>자기소개</label>

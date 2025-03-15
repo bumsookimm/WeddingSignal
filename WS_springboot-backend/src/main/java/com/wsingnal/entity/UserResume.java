@@ -1,4 +1,4 @@
-package com.wsingnal.model;
+package com.wsingnal.entity;
 
 import java.util.Date;
 
@@ -30,7 +30,7 @@ public class UserResume {
 	
 	private String mbti;
 	private String region;
-	private int heigh;
+	private int height;
 	private Date birthdate;
 	private String introduction;
 	private String photo1;
