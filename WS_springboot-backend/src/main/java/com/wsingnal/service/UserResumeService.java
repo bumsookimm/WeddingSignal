@@ -37,22 +37,44 @@ public class UserResumeService {
         
         User user = email.get();  // 여기서 get() 호출
 
+       
+        
         try {
-            UserResume userResume = new UserResume();
-            
-            // UserResume 객체에 값 설정
-            userResume.setUser(user);
-            userResume.setMbti(userResumeDto.getMbti());
-            userResume.setHeight(userResumeDto.getHeight());
-            userResume.setRegion(userResumeDto.getRegion());
-            userResume.setBirthdate(userResumeDto.getBirthdate());
-            userResume.setIntroduction(userResumeDto.getIntroduction());
-            userResume.setPhoto1(userResumeDto.getPhoto1());
-            userResume.setPhoto2(userResumeDto.getPhoto2());
-            userResume.setCreated_at(new Date());
-            
+            // 기존 자기소개서가 있는지 확인
+            Optional<UserResume> existingResume = userResumeRepository.findByUser(user);
 
-            // 저장
+            UserResume userResume;
+            
+       
+            
+            if (existingResume.isPresent()) {
+                // 기존 자기소개서가 있으면 업데이트
+                userResume = existingResume.get();
+                userResume.setMbti(userResumeDto.getMbti());
+                userResume.setHeight(userResumeDto.getHeight());
+                userResume.setRegion(userResumeDto.getRegion());
+                userResume.setBirthdate(userResumeDto.getBirthdate());
+                userResume.setIntroduction(userResumeDto.getIntroduction());
+                userResume.setPhoto1(userResumeDto.getPhoto1());
+                userResume.setPhoto2(userResumeDto.getPhoto2());
+                userResume.setUpdated_at(new Date()); // 수정 시간 업데이트
+            
+            } else {
+                // 기존 자기소개서가 없으면 새로 생성
+                userResume = new UserResume();
+              
+                userResume.setUser(user);
+                userResume.setMbti(userResumeDto.getMbti());
+                userResume.setHeight(userResumeDto.getHeight());
+                userResume.setRegion(userResumeDto.getRegion());
+                userResume.setBirthdate(userResumeDto.getBirthdate());
+                userResume.setIntroduction(userResumeDto.getIntroduction());
+                userResume.setPhoto1(userResumeDto.getPhoto1());
+                userResume.setPhoto2(userResumeDto.getPhoto2());
+                userResume.setCreated_at(new Date()); // 생성 시간 설정
+            }
+
+            // 저장 (업데이트 또는 새로 생성)
             userResumeRepository.save(userResume);
 
             return "success"; // 성공 메시지

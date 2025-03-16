@@ -9,7 +9,9 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +25,7 @@ import com.wsingnal.entity.User;
 import com.wsingnal.repository.UserRepository;
 import com.wsingnal.service.LoginService;
 import com.wsingnal.service.PasswordChangeService;
+import com.wsingnal.service.ResumeDeleteService;
 import com.wsingnal.service.ResumeViewService;
 import com.wsingnal.service.SmsService;
 import com.wsingnal.service.UserResumeService;
@@ -56,6 +59,9 @@ public class WSignalController {
 
 	@Autowired
 	private ResumeViewService resumeViewService;
+
+	@Autowired
+	private ResumeDeleteService resumeDeleteService;
 	
 	
 	@PostMapping("/signup")
@@ -221,45 +227,49 @@ public class WSignalController {
 	}
 
 	@PostMapping("/resume/save")
-	public ResponseEntity<Map<String, Object>> saveResume(@RequestBody UserResumeDto userResumeDto, HttpSession session){
+	public ResponseEntity<Map<String, Object>> saveResume(@RequestBody UserResumeDto userResumeDto,
+			HttpSession session) {
 		String loginUser = (String) session.getAttribute("loginUser");
-		System.out.println("loginUser: "+loginUser);
+		System.out.println("loginUser: " + loginUser);
 		String result = userResumeService.saveResume(userResumeDto, loginUser);
 
-		System.out.println("userResumeDto: "+userResumeDto);
-	   
-		Map<String, Object> response = new HashMap<>();
-	    if (result != null) {
-	        response.put("success", true);
-	      
-	    } else {
-	        response.put("success", false);
-	       
-	    }
+		System.out.println("userResumeDto: " + userResumeDto);
 
-	    return ResponseEntity.ok(response);
+		Map<String, Object> response = new HashMap<>();
+		if (result != null) {
+			response.put("success", true);
+
+		} else {
+			response.put("success", false);
+
+		}
+
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/resume")
-	public ResponseEntity<?> ResumeView (HttpSession session){
+	public ResponseEntity<?> resumeView(HttpSession session) {
 		String loginUser = (String) session.getAttribute("loginUser");
-		
-        if (loginUser == null) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("error", "로그인이 필요합니다");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-        }
 
-        List<UserResumeDto> userResume = resumeViewService.resumView(loginUser);
-		
-        System.out.println("userResume: "+userResume);
-        
-        return ResponseEntity.ok(userResume.get(0));
-		
+		if (loginUser == null) {
+			Map<String, Object> errorResponse = new HashMap<>();
+			errorResponse.put("error", "로그인이 필요합니다");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+		}
+
+		List<UserResumeDto> userResume = resumeViewService.resumView(loginUser);
+
+		System.out.println("userResume: " + userResume);
+
+		return ResponseEntity.ok(userResume.get(0));
+
+	}
+
+	@DeleteMapping("resume/delete/{resume_id}")
+	public void resumeDelete (@PathVariable int resuem_id){
 	
-	
+		resumeDeleteService.resumeDelete(resuem_id);
+		
 	}
 	
-
-
 }

@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import com.wsingnal.dto.UserResumeDto;
 
 @Mapper
-public interface iDao {
+public interface IDao {
 
-	List<UserResumeDto> showResume (String email);
+	public List<UserResumeDto> showResume (String email);
 }

@@ -21,7 +21,7 @@ public class UserResume {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  
-    private int resume_id;  
+    private int resumeId;  
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")  // 외래 키 설정
