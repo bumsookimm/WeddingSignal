@@ -25,7 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
             .and()
             .csrf().disable()  // CSRF 보호 비활성화
             .authorizeRequests()
-            .requestMatchers("/api/**").permitAll()  //  API 경로 인증 없이 허용
+            .requestMatchers("/api/**" , "/images/**").permitAll()  //  API 경로 인증 없이 허용
             .anyRequest().authenticated();  // 나머지 요청은 인증 필요
         return http.build();
     }

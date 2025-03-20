@@ -116,7 +116,7 @@ function ProfilePage() {
     <div className="profile-page">
       <h2>회원 정보</h2>
       <div className="profile-info">
-        <p><strong>이름:</strong> {userInfo.nickname}</p>
+        <p><strong>이름:</strong> {userInfo.name}</p>
         <p><strong>이메일:</strong> {userInfo.email}</p>
         <p><strong>성별:</strong> {userInfo.gender}</p>
         <p><strong>전화번호:</strong> {userInfo.phone}</p>

@@ -14,7 +14,7 @@ public class UserResumeDto {
 	private String user_id;
 	private String mbti;
 	private String region;
-	private int heigh;
+	private int height;
 	private Date birthdate;
 	private String introduction;
 	private String photo1;

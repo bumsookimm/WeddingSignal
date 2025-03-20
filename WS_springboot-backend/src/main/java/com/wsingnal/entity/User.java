@@ -1,4 +1,4 @@
-package com.wsingnal.model;
+package com.wsingnal.entity;
 
 import java.util.Date;
 import java.util.UUID;

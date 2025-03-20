@@ -1,4 +1,4 @@
-package com.wsingnal.model;
+package com.wsingnal.entity;
 
 import java.util.Date;
 
@@ -21,7 +21,7 @@ public class UserResume {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)  
-    private int resume_id;  
+    private int resumeId;  
 	
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")  // 외래 키 설정
@@ -30,7 +30,7 @@ public class UserResume {
 	
 	private String mbti;
 	private String region;
-	private int heigh;
+	private int height;
 	private Date birthdate;
 	private String introduction;
 	private String photo1;
