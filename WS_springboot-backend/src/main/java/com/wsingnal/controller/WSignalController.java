@@ -1,5 +1,6 @@
 package com.wsingnal.controller;
 
+import java.sql.Date;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +16,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.wsingnal.dto.PhoneRequestDto;
 import com.wsingnal.dto.UserDto;
@@ -26,9 +30,9 @@ import com.wsingnal.repository.UserRepository;
 import com.wsingnal.service.LoginService;
 import com.wsingnal.service.PasswordChangeService;
 import com.wsingnal.service.ResumeDeleteService;
+import com.wsingnal.service.ResumeSaveService;
 import com.wsingnal.service.ResumeViewService;
 import com.wsingnal.service.SmsService;
-import com.wsingnal.service.UserResumeService;
 import com.wsingnal.service.UserService;
 
 import jakarta.servlet.http.Cookie;
@@ -55,7 +59,7 @@ public class WSignalController {
 	private PasswordChangeService passwordChangeService;
 
 	@Autowired
-	private UserResumeService userResumeService;
+	private ResumeSaveService userResumeService;
 
 	@Autowired
 	private ResumeViewService resumeViewService;
@@ -227,49 +231,84 @@ public class WSignalController {
 	}
 
 	@PostMapping("/resume/save")
-	public ResponseEntity<Map<String, Object>> saveResume(@RequestBody UserResumeDto userResumeDto,
-			HttpSession session) {
-		String loginUser = (String) session.getAttribute("loginUser");
-		System.out.println("loginUser: " + loginUser);
-		String result = userResumeService.saveResume(userResumeDto, loginUser);
+	public ResponseEntity<Map<String, Object>> saveResume(@RequestParam("photo1") MultipartFile photo1,
+	                                                       @RequestParam("photo2") MultipartFile photo2,
+	                                                       @RequestParam("mbti") String mbti,
+	                                                       @RequestParam("height") int height,
+	                                                       @RequestParam("birthdate") Date birthdate,
+	                                                       @RequestParam("introduction") String introduction,
+	                                                       @RequestParam("region") String region,
+	                                                       HttpSession session) {
 
-		System.out.println("userResumeDto: " + userResumeDto);
+	    String loginUser = (String) session.getAttribute("loginUser");
+	    System.out.println("loginUser: " + loginUser);
 
-		Map<String, Object> response = new HashMap<>();
-		if (result != null) {
-			response.put("success", true);
+	    // DTO 객체를 직접 사용하지 않고, 파라미터로 받은 값들을 서비스에 전달
+	    UserResumeDto userResumeDto = new UserResumeDto();
+	    userResumeDto.setMbti(mbti);
+	    userResumeDto.setHeight(height);
+	    userResumeDto.setBirthdate(birthdate);
+	    userResumeDto.setIntroduction(introduction);
+	    userResumeDto.setRegion(region);
 
-		} else {
-			response.put("success", false);
+	    String result = userResumeService.saveResume(userResumeDto, loginUser, photo1, photo2);
 
-		}
+	    System.out.println("userResumeDto: " + userResumeDto);
 
-		return ResponseEntity.ok(response);
+	    Map<String, Object> response = new HashMap<>();
+	    if (result != null) {
+	        response.put("success", true);
+	    } else {
+	        response.put("success", false);
+	    }
+
+	    return ResponseEntity.ok(response);
 	}
+
 
 	@GetMapping("/resume")
 	public ResponseEntity<?> resumeView(HttpSession session) {
-		String loginUser = (String) session.getAttribute("loginUser");
+	    String loginUser = (String) session.getAttribute("loginUser");
 
-		if (loginUser == null) {
-			Map<String, Object> errorResponse = new HashMap<>();
-			errorResponse.put("error", "로그인이 필요합니다");
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
-		}
+	    if (loginUser == null) {
+	        Map<String, Object> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "로그인이 필요합니다");
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
+	    }
 
-		List<UserResumeDto> userResume = resumeViewService.resumView(loginUser);
+	    List<UserResumeDto> userResume = resumeViewService.resumView(loginUser);
 
-		System.out.println("userResume: " + userResume);
+	    if (userResume.isEmpty()) {
+	        // 이력서가 없는 경우에는 빈 응답 반환
+	        return ResponseEntity.ok(new HashMap<>());  // 빈 객체 반환
+	    }
 
-		return ResponseEntity.ok(userResume.get(0));
+	    UserResumeDto resume = userResume.get(0);
+	    // 이미지는 서버 URL을 포함한 경로로 변환
+	    resume.setPhoto1("http://localhost:8070/images/" + resume.getPhoto1());
+	    resume.setPhoto2("http://localhost:8070/images/" + resume.getPhoto2());
 
+	    return ResponseEntity.ok(resume);
 	}
-
-	@DeleteMapping("resume/delete/{resume_id}")
-	public void resumeDelete (@PathVariable int resuem_id){
 	
-		resumeDeleteService.resumeDelete(resuem_id);
-		
+
+	@DeleteMapping("/resume/delete/{resume_id}")
+	public ResponseEntity<Map<String, Object>> resumeDelete (@PathVariable int resume_id){
+		System.out.println("resuem_id: "+resume_id);
+	    try {
+	        boolean success = (boolean) resumeDeleteService.resumeDelete(resume_id);
+	        
+	        // 성공적으로 삭제된 경우
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("success", success);
+	        return ResponseEntity.ok(response);
+
+	    } catch (ResponseStatusException e) {
+	        // 예외가 발생하면 404로 응답
+	        Map<String, Object> response = new HashMap<>();
+	        response.put("error", e.getReason());
+	        return ResponseEntity.status(e.getStatusCode()).body(response);
+	    }
 	}
 	
 }

@@ -4,8 +4,8 @@ import '../assets/css/ResumePage.css';
 
 const ResumePage = () => {
   const [formData, setFormData] = useState({
-    photo1: "",
-    photo2: "",
+    photo1: null,  // 파일 객체로 변경
+    photo2: null,  // 파일 객체로 변경
     mbti: "",
     height: "",
     birthdate: "",
@@ -58,19 +58,14 @@ const ResumePage = () => {
   const handleFileChange = (e, photoKey) => {
     const file = e.target.files[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          [photoKey]: reader.result,
-        }));
-        // 사진이 추가되면 오류 메시지 숨김
-        setErrors((prevErrors) => ({
-          ...prevErrors,
-          [photoKey]: false,
-        }));
-      };
-      reader.readAsDataURL(file);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [photoKey]: file,  // 실제 파일 객체로 저장
+      }));
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [photoKey]: false,
+      }));
     }
   };
 
@@ -84,20 +79,33 @@ const ResumePage = () => {
       introduction: !formData.introduction,
       region: !formData.region,
     };
-
+  
     setErrors(newErrors);
-
+  
     // 하나라도 비어 있으면 저장하지 않음
     if (Object.values(newErrors).includes(true)) {
       return;
     }
-
+  
+    // FormData로 변환하여 서버로 전송
+    const data = new FormData();
+    data.append('mbti', formData.mbti);
+    data.append('height', formData.height);
+    data.append('birthdate', formData.birthdate);
+    data.append('introduction', formData.introduction);
+    data.append('region', formData.region);
+    
+    // 파일도 FormData에 첨부
+    if (formData.photo1) data.append('photo1', formData.photo1);
+    if (formData.photo2) data.append('photo2', formData.photo2);
+  
+    console.log("data: ", data);
     try {
-      const response = await axios.post("http://localhost:8070/api/resume/save", formData, {
-        headers: { "Content-Type": "application/json" },
+      const response = await axios.post("http://localhost:8070/api/resume/save", data, {
+        headers: { "Content-Type": "multipart/form-data" },
         withCredentials: true,
       });
-
+  
       if (response.data.success) {
         alert("자기소개서가 저장되었습니다!");
       }
@@ -115,13 +123,14 @@ const ResumePage = () => {
   
     try {
       const response = await axios.delete(`http://localhost:8070/api/resume/delete/${formData.resume_id}`, {
+        headers: { "Content-Type": "application/json" },
         withCredentials: true,
       });
   
       if (response.data.success) {
         setFormData({
-          photo1: "",
-          photo2: "",
+          photo1: null,
+          photo2: null,
           mbti: "",
           height: "",
           birthdate: "",
@@ -138,26 +147,37 @@ const ResumePage = () => {
 
   return (
     <div className="resume-page">
-      <h2>자기소개서</h2>
-      <form className="resume-form">
-        <div className="form-group photos">
-          {["photo1", "photo2"].map((photoKey) => (
-            <div className="photo-box" key={photoKey}>
-              <input
-                type="file"
-                accept="image/*"
-                id={photoKey}
-                onChange={(e) => handleFileChange(e, photoKey)}
-                className="file-input"
-              />
-              {formData[photoKey] ? (
-                <img src={formData[photoKey]} alt={photoKey} className="photo-preview" />
-              ) : (
-                <span>+ 사진 추가</span>
-              )}
-              {errors[photoKey] && !formData[photoKey] && <span className="error-message">사진을 추가하세요.</span>}
-            </div>
-          ))}
+              <h2>자기소개서</h2>
+              <form className="resume-form">
+                <div className="form-group photos">
+                {["photo1", "photo2"].map((photoKey) => (
+              <div className="photo-box" key={photoKey}>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id={photoKey}
+                  onChange={(e) => handleFileChange(e, photoKey)}
+                  className="file-input"
+                />
+                {formData[photoKey] && typeof formData[photoKey] === 'string' && formData[photoKey].startsWith("http") ? (
+                  <img
+                    src={formData[photoKey]}  // 서버에서 반환된 URL 사용
+                    alt={photoKey}
+                    className="photo-preview"
+                  />
+                ) : formData[photoKey] && formData[photoKey] instanceof File ? (
+                  <img
+                    src={URL.createObjectURL(formData[photoKey])}  // 로컬 파일 미리보기
+                    alt={photoKey}
+                    className="photo-preview"
+                  />
+                ) : (
+                  <span>+ 사진 추가</span>
+                )}
+               
+                {errors[photoKey] && !formData[photoKey] && <span className="error-message">사진을 추가하세요.</span>}
+              </div>
+        ))}
         </div>
 
         {[ 
@@ -171,7 +191,7 @@ const ResumePage = () => {
             <input
               type={type}
               name={name}
-              value={formData[name]}
+              value={formData[name] || ""}  // 빈 문자열로 처리하여 undefined 방지
               onChange={handleChange}
               placeholder={placeholder || ""}
             />
@@ -183,7 +203,7 @@ const ResumePage = () => {
           <label>자기소개</label>
           <textarea
             name="introduction"
-            value={formData.introduction}
+            value={formData.introduction || ""}  // 빈 문자열로 처리하여 undefined 방지
             onChange={handleChange}
             placeholder="자기소개를 입력하세요"
           />
